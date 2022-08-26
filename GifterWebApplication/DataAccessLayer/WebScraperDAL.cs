@@ -22,8 +22,9 @@ namespace DataAccessLayer
                 options.AddArgument("--headless");
             }
             options.AddArgument("--incognito");
+            options.BrowserExecutableLocation = "../Shared/Assets/firefox/firefox.exe";
 
-            FirefoxDriver driver = new FirefoxDriver(@"../Shared/Assets", options);
+            FirefoxDriver driver = new FirefoxDriver("../Shared/Assets", options);
 
             //opens the website
             driver.Navigate().GoToUrl("https://www.instagram.com/");
