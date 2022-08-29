@@ -9,7 +9,7 @@ namespace GiterWebAPI.Controllers
     public class WebScraperController : Controller
     {
 
-        [HttpGet("/GetPictures/{Profile}")]
+        [HttpGet("/GetPictures")]
         [ProducesResponseType(404)]
         [ProducesResponseType(302, Type = typeof(DataResponse<string>))]
         public IActionResult GetWebScraper(string profile)

@@ -11,26 +11,27 @@ namespace BusinessLogicalLayer
 
         public static DataResponse<string> Scrape(bool showBrowser, string profile)
         {
-            Stopwatch timer = new Stopwatch();
-            timer.Start();
-            i++;
-            var task = Task.Run(() => WebScraperDAL.ScrapeInstagramWithDefaultAccount(showBrowser, profile));
-            if (task.Wait(TimeSpan.FromSeconds(double.PositiveInfinity)))
-            {
-                return task.Result;
+            return WebScraperDAL.ScrapeInstagramWithDefaultAccount(showBrowser, profile);
+            //Stopwatch timer = new Stopwatch();
+            //timer.Start();
+            //i++;
+            //var task = Task.Run(() => WebScraperDAL.ScrapeInstagramWithDefaultAccount(showBrowser, profile));
+            //if (task.Wait(TimeSpan.FromSeconds(double.PositiveInfinity)))
+            //{
+            //    return task.Result;
                
-                timer.Stop();
+            //    timer.Stop();
 
-                TimeSpan timeSpan = timer.Elapsed;
+            //    TimeSpan timeSpan = timer.Elapsed;
 
-                mediatempo = timeSpan.TotalSeconds;                
-            }
-            return new DataResponse<string>
-            {
-                Message = "Tempo Expirado",
-                HasSucces = false,
-                Item = null
-            };
+            //    mediatempo = timeSpan.TotalSeconds;                
+            //}
+            //return new DataResponse<string>
+            //{
+            //    Message = "Tempo Expirado",
+            //    HasSucces = false,
+            //    Item = null
+            //};
         }
     }
 }
