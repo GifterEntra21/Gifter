@@ -1,0 +1,9 @@
+app.UseCors(
+    origin =>
+    {
+        origin.WithOrigins("http://192.168.0.67:3000");
+        origin.SetIsOriginAllowedToAllowWildcardSubdomains();
+        origin.SetIsOriginAllowed(origin => true);
+        origin.AllowAnyMethod();
+        origin.AllowAnyHeader();
+    }
