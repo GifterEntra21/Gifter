@@ -26,7 +26,7 @@ jobs:
         run: dotnet build --configuration Release ./GifterWebApplication
 
       - name: dotnet publish
-        run: dotnet publish -c Release 
+        run: dotnet publish ~/GifterWebApplication/GifterWebApplication.sln
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
