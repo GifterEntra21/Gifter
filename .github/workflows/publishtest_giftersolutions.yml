@@ -6,7 +6,7 @@ name: Build and deploy ASP.Net Core app to Azure Web App - giftersolutions
 on:
   push:
     branches:
-      - main
+      - publishTest
   workflow_dispatch:
 
 jobs:
@@ -26,7 +26,7 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish ./GifterWebApplication/GifterWebApplication.csproj -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'giftersolutions'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B0452DC2A47B4EB1BEC1DCE276DAFBEF }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_91129FFA05AC484D8264E41D87CB7BB1 }}
           package: .
