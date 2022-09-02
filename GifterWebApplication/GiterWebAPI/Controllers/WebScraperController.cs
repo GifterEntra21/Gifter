@@ -16,9 +16,8 @@ namespace GiterWebAPI.Controllers
 
         [HttpGet("/Pictures")]        
         [ProducesResponseType(404)]
-        [Authorize]
         [ProducesResponseType(302, Type = typeof(DataResponse<string>))]
-        public IActionResult GetWebScraper(string profile,string token)
+        public IActionResult GetWebScraper(string profile)
         {
             DataResponse<string> a = WebScraperBLL.Scrape(false, profile);
 
