@@ -1,9 +1,11 @@
-﻿using System.Collections.ObjectModel;
+﻿
+using Entities;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using Shared.Resposes;
+
 
 namespace DataAccessLayer
 {
@@ -11,14 +13,15 @@ namespace DataAccessLayer
 
     public static class WebScraperDAL
     {
-        //List<string>
+
         public static DataResponse<string> ScrapeInstagramWithDefaultAccount(bool headless, string profile)
         {
-
-            FirefoxOptions options = new();
+            
 
             try
             {
+                FirefoxOptions options = new();
+
                 //makes the browser invisible
                 if (headless)
                 {
@@ -39,6 +42,8 @@ namespace DataAccessLayer
 
 
                 //writes the account's username and password and clicks to login
+                //username.SendKeys(DotEnv.DEFAULT_USERNAME);
+                //password.SendKeys(DotEnv.DEFAULT_PASSWORD);
                 username.SendKeys(DotEnv.DEFAULT_USERNAME);
                 password.SendKeys(DotEnv.DEFAULT_PASSWORD);
 

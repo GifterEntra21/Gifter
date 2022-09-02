@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccessLayer", "DataAccessLayer\DataAccessLayer.csproj", "{D94A8704-C3E4-4286-B119-53A503CBA546}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GiterWebAPI", "GiterWebAPI\GiterWebAPI.csproj", "{C8AE22D4-D9D0-45E3-839F-A535D1267313}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GiterWebAPI", "GiterWebAPI\GiterWebAPI.csproj", "{C8AE22D4-D9D0-45E3-839F-A535D1267313}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
