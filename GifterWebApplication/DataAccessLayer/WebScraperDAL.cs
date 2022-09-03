@@ -20,6 +20,7 @@ namespace DataAccessLayer
 
             try
             {
+                
                 FirefoxOptions options = new();
 
                 //makes the browser invisible
@@ -54,6 +55,7 @@ namespace DataAccessLayer
                 wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("/html/body/div[1]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/button[2]"))).Click();
 
                 //searches the user profile
+
                 IWebElement search = wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("/html/body/div[1]/div/div/div/div[1]/div/div/div/div[1]/div[1]/section/nav/div[2]/div/div/div[2]/input")));
                 search.SendKeys(profile);
                 wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("/html/body/div[1]/div/div/div/div[1]/div/div/div/div[1]/div[1]/section/nav/div[2]/div/div/div[2]/div[3]/div/div[2]/div/div[1]/a/div"))).Click();
