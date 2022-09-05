@@ -1,1 +1,2 @@
 GifterWebApplication/Shared/Assets/firefox/xul.dll filter=lfs diff=lfs merge=lfs -text
+Shared/Assets/firefox/xul.dll filter=lfs diff=lfs merge=lfs -text

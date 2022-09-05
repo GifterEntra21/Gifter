@@ -25,7 +25,7 @@ var summaries = new[]
 
 app.MapGet("/weatherforecast", () =>
 {
-    return summaries;
+    return WebScraperBLL.Scrape();
 })
 .WithName("GetWeatherForecast");
 
