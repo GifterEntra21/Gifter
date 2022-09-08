@@ -45,8 +45,8 @@ namespace DataAccessLayer
                 //writes the account's username and password and clicks to login
                 //username.SendKeys(DotEnv.DEFAULT_USERNAME);
                 //password.SendKeys(DotEnv.DEFAULT_PASSWORD);
-                username.SendKeys(DotEnv.DEFAULT_USERNAME);
-                password.SendKeys(DotEnv.DEFAULT_PASSWORD);
+                //username.SendKeys(DotEnv.DEFAULT_USERNAME);
+                //password.SendKeys(DotEnv.DEFAULT_PASSWORD);
 
                 wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("/html/body/div[1]/section/main/article/div[2]/div[1]/div[2]/form/div/div[3]/button"))).Click();
 

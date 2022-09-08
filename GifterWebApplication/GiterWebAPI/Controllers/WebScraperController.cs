@@ -2,8 +2,7 @@
 using BusinessLogicalLayer;
 using Shared.Resposes;
 using GiterWebAPI.Helpers;
-using GiterWebAPI.Interfaces;
-using Microsoft.Extensions.Options;
+
 
 namespace GiterWebAPI.Controllers
 {
@@ -18,9 +17,9 @@ namespace GiterWebAPI.Controllers
         [ProducesResponseType(404)]
         [Authorize]
         [ProducesResponseType(302, Type = typeof(DataResponse<string>))]
-        public IActionResult GetWebScraper()
+        public IActionResult GetWebScraper(string profile)
         {
-            DataResponse<string> a = WebScraperBLL.Scrape(false, "neymarjr");
+            DataResponse<string> a = WebScraperBLL.Scrape(false, profile)
 
             if (!a.HasSucces || a.Item == null)
             {
