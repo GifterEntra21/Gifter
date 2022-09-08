@@ -1,9 +1,26 @@
-using BusinessLogicalLayer;
+using GiterWebAPI.Helpers;
+using GiterWebAPI.Interfaces;
+using GiterWebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+{
+    var services = builder.Services;
+    services.AddCors();
+    services.AddControllers();
+
+    // configure strongly typed settings object
+    services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+
+    // configure DI for application services
+    services.AddScoped<IUserService, UserService>();
+}
+
+
+
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -15,23 +32,21 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.UseAuthorization();
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    // global cors policy
+    app.UseCors(x => x
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader());
 
-app.MapGet("/weatherforecast", () =>
-{
-    return WebScraperBLL.Scrape();
-})
-.WithName("GetWeatherForecast");
+    // custom jwt auth middleware
+    app.UseMiddleware<JwtMiddleware>();
+
+    app.MapControllers();
+}
+app.MapControllers();
 
 app.Run();
-
-internal record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
