@@ -6,10 +6,10 @@ namespace BusinessLogicalLayer
 {
     public static class WebScraperBLL
     {
-        public static async Task<List<string>> Scrape()
+        public static async Task<List<string>> Scrape(string profile)
         {
             ComputerVision vision = new ComputerVision();
-            var scrape = WebScraperDAL.ScrapeInstagramWithDefaultAccount(false, "neymarjr");
+            var scrape = WebScraperDAL.ScrapeInstagramWithDefaultAccount(false, profile);
             List<ImageTag> tags = await vision.CheckTags(scrape);
             List<string> tagsNames = new List<string>();
             foreach (var tag in tags)
