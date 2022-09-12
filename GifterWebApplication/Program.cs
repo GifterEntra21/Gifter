@@ -1,6 +1,10 @@
+using DataAccessLayer;
+using GifterWebApplication.Interfaces;
+using GifterWebApplication.Services;
 using GiterWebAPI.Helpers;
 using GiterWebAPI.Interfaces;
 using GiterWebAPI.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +19,10 @@ var builder = WebApplication.CreateBuilder(args);
 
     // configure DI for application services
     services.AddScoped<IUserService, UserService>();
+    services.AddTransient<IAuthenticationService, AuthenticationService>();
+    services.AddDbContext<GifterContextDb>(options => options.UseSqlServer("name=ConnectionStrings:GifterConnection"));
+
+
 }
 
 

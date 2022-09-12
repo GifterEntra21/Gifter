@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using GiterWebAPI.Helpers;
-using Shared.Resposes;
+using Shared.Responses;
 using BusinessLogicalLayer;
 
 namespace GiterWebAPI.Controllers

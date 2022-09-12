@@ -1,8 +1,8 @@
 ﻿namespace GiterWebAPI.Controllers;
 
+using GifterWebApplication.Models.Authentication;
 using GiterWebAPI.Helpers;
 using GiterWebAPI.Interfaces;
-using GiterWebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -15,18 +15,7 @@ public class UsersController : ControllerBase
     public UsersController(IUserService userService, IOptions<AppSettings> settings)
     {
         _userService = userService;
-    }
-    
-    [HttpPost("authenticate")]
-    public IActionResult Authenticate(AuthenticationRequest model)
-    {
-        var response = _userService.Authenticate(model);
-
-        if (response == null)
-            return BadRequest(new { message = "Username or password is incorrect" });
-
-        return Ok(response);
-    }
+    }   
 
     [Authorize]
     [HttpGet]
