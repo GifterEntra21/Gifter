@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using AutoMapper;
+using Entities;
 using GifterWebApplication.Interfaces;
 using GifterWebApplication.Models.Authentication;
 using GiterWebAPI.Helpers;
@@ -16,26 +17,31 @@ namespace GifterWebApplication.Services
        
         private readonly AppSettings _appSettings;
         private readonly IUserService _userService;
+        private readonly IMapper _mapper;
 
-        public AuthenticationService(IOptions<AppSettings> appSettings, IUserService userService)
+        public AuthenticationService(IOptions<AppSettings> appSettings, IUserService userService, IMapper mapper)
         {
             _appSettings = appSettings.Value;
             _userService = userService;
+            _mapper = mapper;
         }
-        public AuthenticationResponse Authenticate(AuthenticationRequest model)
+        public async Task<AuthenticationResponse> Authenticate(AuthenticationRequest model)
         {
-            var user = _userService.GetByUsername(model.Username);
+            User _user = _mapper.Map<User>(model);
+            var user = await _userService.GetByUsername(_user);
             //x => x.Username == model.Username && x.Password == model.Password
 
             // return null if user not found
             if (user == null) return null;
 
             // authentication successful so generate jwt token
-            var token = generateJwtToken(user);
+            var token = generateJwtToken(user.Item);
 
-            return new AuthenticationResponse(user, token);
-            return null;
+          
+            return new AuthenticationResponse(user.Item, token);
         }
+
+
         private string generateJwtToken(User user)
         {
             // generate token that is valid for 7 days

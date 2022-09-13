@@ -17,8 +17,7 @@ namespace DataAccessLayer
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //Assembly no contexto do .NET
-            //Carrega os map config que tão criado dentro do projeto (assembly) DAO 
+            
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             base.OnModelCreating(modelBuilder);
         }

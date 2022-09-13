@@ -12,7 +12,7 @@ namespace DataAccessLayer.Mappings
             builder.Property(p => p.Username).IsRequired().HasMaxLength(100).IsUnicode(false);
             builder.Property(p => p.FirstName).IsRequired().HasMaxLength(100).IsUnicode(false);
             builder.Property(p => p.Password).IsRequired().HasMaxLength(20).IsUnicode(false);
-            builder.Property(p => p.LastName).IsRequired().HasMaxLength(100).IsUnicode(false);
+            builder.Property(p => p.Email).IsRequired().HasMaxLength(100).IsUnicode(false);
 
             builder.HasIndex(p => p.Username).IsUnique().HasDatabaseName("UQ_USUARIOS_USERNAME");
         }

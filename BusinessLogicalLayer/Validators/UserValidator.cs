@@ -27,11 +27,11 @@ namespace BusinessLogicalLayer.Validators
 
         public void ValidateLastName()
         {
-            RuleFor(x => x.LastName).MinimumLength(2).WithMessage(MessagesValidation.MESSAGE_ERROR_LAST_NAME_LENGHT).MaximumLength(30).WithMessage(MessagesValidation.MESSAGE_ERROR_LAST_NAME_LENGHT);
+            RuleFor(x => x.Email).MinimumLength(2).WithMessage(MessagesValidation.MESSAGE_ERROR_LAST_NAME_LENGHT).MaximumLength(30).WithMessage(MessagesValidation.MESSAGE_ERROR_LAST_NAME_LENGHT);
         }
         public void ValidateUserName()
         {
-            RuleFor(x => x.LastName).MinimumLength(5).WithMessage(MessagesValidation.MESSAGE_ERROR_USERNAME_LENGHT).MaximumLength(30).WithMessage(MessagesValidation.MESSAGE_ERROR_USERNAME_LENGHT);
+            RuleFor(x => x.Email).MinimumLength(5).WithMessage(MessagesValidation.MESSAGE_ERROR_USERNAME_LENGHT).MaximumLength(30).WithMessage(MessagesValidation.MESSAGE_ERROR_USERNAME_LENGHT);
         }
 
     }

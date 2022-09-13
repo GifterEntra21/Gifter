@@ -1,10 +1,14 @@
+using AutoMapper;
 using DataAccessLayer;
+using DataAccessLayer.Interfaces;
+using DataAccessLayer.Services;
 using GifterWebApplication.Interfaces;
 using GifterWebApplication.Services;
 using GiterWebAPI.Helpers;
 using GiterWebAPI.Interfaces;
 using GiterWebAPI.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,9 +22,12 @@ var builder = WebApplication.CreateBuilder(args);
     services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
     // configure DI for application services
-    services.AddScoped<IUserService, UserService>();
+    services.AddTransient<IUserService, UserService>();
     services.AddTransient<IAuthenticationService, AuthenticationService>();
-    services.AddDbContext<GifterContextDb>(options => options.UseSqlServer("name=ConnectionStrings:GifterConnection"));
+    services.AddTransient<IUserDAL, UserServiceDAL>();
+    services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+    services.AddDbContext<GifterContextDb>(options => options.UseSqlServer("name=ConnectionStrings:GifterConnectionString"));
 
 
 }

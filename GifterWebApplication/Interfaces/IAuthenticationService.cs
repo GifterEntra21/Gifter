@@ -4,6 +4,6 @@ namespace GifterWebApplication.Interfaces
 {
     public interface IAuthenticationService
     {
-        AuthenticationResponse Authenticate(AuthenticationRequest model);
+        Task<AuthenticationResponse> Authenticate(AuthenticationRequest model);
     }
 }

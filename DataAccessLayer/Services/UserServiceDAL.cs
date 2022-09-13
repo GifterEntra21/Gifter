@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Services
 {
-    public class UserService : IUserDAL
+    public class UserServiceDAL : IUserDAL
     {
         private readonly GifterContextDb _Db;
-        public UserService(GifterContextDb db)
+        public UserServiceDAL(GifterContextDb db)
         {
             _Db = db;
         }
@@ -67,11 +67,11 @@ namespace DataAccessLayer.Services
             }
         }
 
-        public async Task<SingleResponse<User>> GetByUsername(string username)
+        public async Task<SingleResponse<User>> GetByUsername(User model)
         {
             try
             {
-                User user = await _Db.Users.FindAsync(username);
+                User user = await _Db.Users.FirstOrDefaultAsync(x => x.Username == model.Username);
                 return ResponseFactory.CreateInstance().CreateSingleSuccessResponse(user);
             }
             catch (Exception ex)
@@ -82,9 +82,9 @@ namespace DataAccessLayer.Services
 
         public async Task<Response> Insert(User user)
         {
+            _Db.Users.Add(user);
             try
             {
-                _Db.Users.Add(user);
                 await _Db.SaveChangesAsync();
                 return ResponseFactory.CreateInstance().CreateSuccessResponse();
             }
@@ -101,7 +101,7 @@ namespace DataAccessLayer.Services
             userDb.Username = user.Username;
             userDb.Password = user.Password;
             userDb.FirstName = user.FirstName;
-            userDb.LastName = user.LastName;
+            userDb.Email = user.Email;
             userDb.IsActive = user.IsActive;
 
             try

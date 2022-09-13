@@ -37,7 +37,7 @@ public class UserService : IUserService
         return await _userDAL.GetById(id);
     }
 
-    public async Task<SingleResponse<User>> GetByUsername(string username)
+    public async Task<SingleResponse<User>> GetByUsername(User username)
     {
         return await _userDAL.GetByUsername(username);
     }
