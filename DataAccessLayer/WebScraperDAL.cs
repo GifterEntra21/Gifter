@@ -51,12 +51,13 @@ namespace DataAccessLayer
 
             //scrolls down to scrape more images
             //maybe the index could be a parameter, so the user could define how much they want to scroll
-            wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("/html/body/div[1]/div/div/div/div[1]/div/div/div/div[1]/section/main/div/div[3]/article/div[1]/div/div[1]/div[1]")));
+
+            wait.Until(ExpectedConditions.ElementToBeClickable(By.ClassName("_aabd")));
 
             //target all images on the page
-            for (int i = 1; i < 8; i++)
+            for (int i = 1; i < 6; i++)
             {
-                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("/html/body/div[1]/div/div/div/div[1]/div/div/div/div[1]/section/main/div/div[3]/article/div[1]/div/div[" + i + "]")));
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath($"/html/body/div[1]/div/div/div/div[1]/div/div/div/div[1]/section/main/div/div[3]/article/div[1]/div/div[{i}]")));
                 driver.ExecuteScript("window.scrollTo(0, 4000);");
 
             }
