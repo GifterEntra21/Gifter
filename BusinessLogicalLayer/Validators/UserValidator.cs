@@ -20,12 +20,8 @@ namespace BusinessLogicalLayer.Validators
         {
             RuleFor(x => x.Password).MinimumLength(8).WithMessage(MessagesValidation.MESSAGE_ERROR_PASSWORD_LENGHT).MaximumLength(20).WithMessage(MessagesValidation.MESSAGE_ERROR_PASSWORD_LENGHT).IsValidatePassword().WithMessage(MessagesValidation.MESSAGE_ERROR_PASSWORD);
         }
-        public void ValidateFirstName()
-        {
-            RuleFor(x => x.FirstName).MinimumLength(2).WithMessage(MessagesValidation.MESSAGE_ERROR_NAME_LENGHT).MaximumLength(30).WithMessage(MessagesValidation.MESSAGE_ERROR_NAME_LENGHT);
-        }
 
-        public void ValidateLastName()
+        public void ValidateEmail()
         {
             RuleFor(x => x.Email).MinimumLength(2).WithMessage(MessagesValidation.MESSAGE_ERROR_LAST_NAME_LENGHT).MaximumLength(30).WithMessage(MessagesValidation.MESSAGE_ERROR_LAST_NAME_LENGHT);
         }

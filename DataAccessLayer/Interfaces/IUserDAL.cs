@@ -15,6 +15,7 @@ namespace DataAccessLayer.Interfaces
         Task<Response> Delete(User user);
         Task<DataResponse<User>> GetAll();
         Task<SingleResponse<User>> GetById(int id);
+        Task<SingleResponse<User>> Login(User model);
         Task<SingleResponse<User>> GetByUsername(User model);
 
     }

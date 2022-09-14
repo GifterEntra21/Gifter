@@ -10,8 +10,8 @@ namespace BusinessLogicalLayer.Validators
     {
         public InsertUserValidator()
         {
-            base.ValidateFirstName();
-            base.ValidateLastName();
+            
+            base.ValidateEmail();
             base.ValidatePassword();
             base.ValidateUserName();
         }

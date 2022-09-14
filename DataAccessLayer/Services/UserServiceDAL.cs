@@ -67,11 +67,13 @@ namespace DataAccessLayer.Services
             }
         }
 
-        public async Task<SingleResponse<User>> GetByUsername(User model)
+        public async Task<SingleResponse<User>> Login(User model)
         {
             try
             {
-                User user = await _Db.Users.FirstOrDefaultAsync(x => x.Username == model.Username);
+                //pq n funciona o await e async? 
+
+                User user = _Db.Users.FirstOrDefault(x => x.Username == model.Username && x.Password == model.Password);
                 return ResponseFactory.CreateInstance().CreateSingleSuccessResponse(user);
             }
             catch (Exception ex)
@@ -97,12 +99,14 @@ namespace DataAccessLayer.Services
 
         public async Task<Response> Update(User user)
         {
-             User userDb =  await _Db.Users.FindAsync(user.Id);
+            User userDb =  await _Db.Users.FindAsync(user.Id);
             userDb.Username = user.Username;
             userDb.Password = user.Password;
-            userDb.FirstName = user.FirstName;
             userDb.Email = user.Email;
             userDb.IsActive = user.IsActive;
+            userDb.RefreshToken = user.RefreshToken;
+            userDb.RefreshTokenExpiryTime = user.RefreshTokenExpiryTime;
+            userDb.AcessToken = user.AcessToken;
 
             try
             {
@@ -113,6 +117,21 @@ namespace DataAccessLayer.Services
             {
 
                 return ResponseFactory.CreateInstance().CreateFailedResponse(ex);
+            }
+        }
+
+        public async Task<SingleResponse<User>> GetByUsername(User model)
+        {
+            try
+            {
+                //pq n funciona o await e async? 
+
+                User user = _Db.Users.SingleOrDefault(u => u.Username == model.Username);
+                return ResponseFactory.CreateInstance().CreateSingleSuccessResponse(user);
+            }
+            catch (Exception ex)
+            {
+                return ResponseFactory.CreateInstance().CreateSingleFailedResponse<User>(ex, null);
             }
         }
     }

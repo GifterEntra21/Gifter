@@ -8,11 +8,25 @@ namespace DataAccessLayer.Mappings
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
+            //8
+
             builder.ToTable("USUARIOS");
+           
+
             builder.Property(p => p.Username).IsRequired().HasMaxLength(100).IsUnicode(false);
-            builder.Property(p => p.FirstName).IsRequired().HasMaxLength(100).IsUnicode(false);
-            builder.Property(p => p.Password).IsRequired().HasMaxLength(20).IsUnicode(false);
+
             builder.Property(p => p.Email).IsRequired().HasMaxLength(100).IsUnicode(false);
+
+            builder.Property(p => p.Password).IsRequired().HasMaxLength(20).IsUnicode(false);
+
+
+            builder.Property(p => p.RefreshToken).IsUnicode(false);
+
+            builder.Property(p => p.RefreshTokenExpiryTime).IsUnicode(false);
+
+            builder.Property(p => p.AcessToken).IsUnicode(false);
+
+    
 
             builder.HasIndex(p => p.Username).IsUnique().HasDatabaseName("UQ_USUARIOS_USERNAME");
         }

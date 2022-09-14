@@ -28,7 +28,7 @@ namespace GifterWebApplication.Services
         public async Task<AuthenticationResponse> Authenticate(AuthenticationRequest model)
         {
             User _user = _mapper.Map<User>(model);
-            var user = await _userService.GetByUsername(_user);
+            var user = await _userService.Login(_user);
             //x => x.Username == model.Username && x.Password == model.Password
 
             // return null if user not found
@@ -38,7 +38,7 @@ namespace GifterWebApplication.Services
             var token = generateJwtToken(user.Item);
 
           
-            return new AuthenticationResponse(user.Item, token);
+            return new AuthenticationResponse();//user.Item, token
         }
 
 

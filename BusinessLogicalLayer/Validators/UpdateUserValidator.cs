@@ -11,8 +11,7 @@ namespace BusinessLogicalLayer.Validators
         public UpdateUserValidator()
         {
             base.ValidateUserName();
-            base.ValidateFirstName();
-            base.ValidateLastName();
+            base.ValidateEmail();
         }
     }
 }

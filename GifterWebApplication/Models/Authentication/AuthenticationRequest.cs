@@ -8,5 +8,7 @@ namespace GifterWebApplication.Models.Authentication
 
         [Required]
         public string Password { get; set; }
+
+
     }
 }

@@ -4,8 +4,7 @@ namespace GifterWebApplication.Models.Users
 {
     public class UserInsertViewModel
     {
-        [Required]
-        public string FirstName { get; set; }
+
         [Required]
         public string Email { get; set; }
         [Required]

@@ -37,9 +37,9 @@ public class UserService : IUserService
         return await _userDAL.GetById(id);
     }
 
-    public async Task<SingleResponse<User>> GetByUsername(User username)
+    public async Task<SingleResponse<User>> Login(User username)
     {
-        return await _userDAL.GetByUsername(username);
+        return await _userDAL.Login(username);
     }
 
     public async Task<Response> Insert(User user)
@@ -51,5 +51,10 @@ public class UserService : IUserService
     public async Task<Response> Update(User user)
     {
         return await _userDAL.Update(user);
+    }
+
+    public async Task<SingleResponse<User>> GetByUsername(User model)
+    {
+        return await _userDAL.GetByUsername(model);
     }
 }
