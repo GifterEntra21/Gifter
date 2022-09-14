@@ -23,10 +23,11 @@ namespace GiterWebAPI.Controllers
             // elas foram transformadas em uma classe que possui como propriedades o nome e a quantidade de cada tag
 
             // trabalhe com a variável response conforme for necessário
-            List<TagWithCount> response = await WebScraperBLL.Scrape("neymarjr");
+            string user = "neymarjr";
+            List<TagWithCount> response = await WebScraperBLL.Scrape(user);
             TagWithCount tag = response.MaxBy(t => t.Count);
 
-            string retorno = "This user likes: " + tag.Name;
+            string retorno = $"The user @{user} likes: " + tag.Name;
             if (response == null)
             {
                 return NotFound();
