@@ -7,6 +7,7 @@ using GifterWebApplication.Services;
 using GiterWebAPI.Helpers;
 using GiterWebAPI.Interfaces;
 using GiterWebAPI.Services;
+using JwtAuthentication.Server.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -25,6 +26,7 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddTransient<IUserService, UserService>();
     services.AddTransient<IAuthenticationService, AuthenticationService>();
     services.AddTransient<IUserDAL, UserServiceDAL>();
+    services.AddTransient<ITokenService, TokenService>();
     services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
     services.AddDbContext<GifterContextDb>(options => options.UseSqlServer("name=ConnectionStrings:GifterConnectionString"));

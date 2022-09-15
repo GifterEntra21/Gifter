@@ -126,7 +126,7 @@ namespace DataAccessLayer.Services
             {
                 //pq n funciona o await e async? 
 
-                User user = _Db.Users.SingleOrDefault(u => u.Username == model.Username);
+                User user = _Db.Users.FirstOrDefault(u => u.Username == model.Username);
                 return ResponseFactory.CreateInstance().CreateSingleSuccessResponse(user);
             }
             catch (Exception ex)

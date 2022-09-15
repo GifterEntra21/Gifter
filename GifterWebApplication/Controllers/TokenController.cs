@@ -7,13 +7,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JwtAuthentication.Server.Controllers
+namespace GifterWebApplication.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class TokenController : ControllerBase
     {
         private readonly IUserService _userService;
+        //imapper n precisa
         private readonly IMapper _mapper;
         private readonly ITokenService _tokenService;
 
@@ -38,8 +39,8 @@ namespace JwtAuthentication.Server.Controllers
             var username = principal.Identity.Name; //this is mapped to the Name claim by default
 
             //var user = _userContext.LoginModels.SingleOrDefault(u => u.UserName == username);
-
-            var user = _userService.GetByUsername(new User {Username = username });
+            //aqui ta dando errado, pq o username ta chegando nulo por algum motivo
+            var user = _userService.GetByUsername(new User {Username = "string" });
 
             if (user == null || user.Result.Item.RefreshToken != refreshToken || user.Result.Item.RefreshTokenExpiryTime <= DateTime.Now)
                 return BadRequest("Invalid client request");

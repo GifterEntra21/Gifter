@@ -6,7 +6,7 @@ using JwtAuthentication.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace JwtAuthentication.Server.Controllers
+namespace GifterWebApplication.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -36,20 +36,22 @@ namespace JwtAuthentication.Server.Controllers
             if (user is null)
                 return Unauthorized();
 
+            //aqui tem coisa dando errado 
             var claims = new List<Claim>
             {
-                //new Claim(ClaimTypes.Name, loginModel.Username),
+                new Claim(ClaimTypes.Name, "string"),
                 new Claim(ClaimTypes.Role, "Manager")
             };
             var accessToken = _tokenService.GenerateAccessToken(claims);
             var refreshToken = _tokenService.GenerateRefreshToken();
 
+            user.Item.AcessToken = accessToken;
             user.Item.RefreshToken = refreshToken;
             user.Item.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
 
             //_userContext.SaveChanges();
             //substituir por update?
-            _userService.Update(user.Item);
+            await _userService.Update(user.Item);
 
             return Ok(new AuthenticationResponse
             {

@@ -8,6 +8,7 @@ namespace GifterWebApplication.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    //controlol
     public class AuthenticationController : Controller
     {
         private IAuthenticationService _authenticationService;

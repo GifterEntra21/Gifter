@@ -15,7 +15,7 @@ public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly IMapper _mapper;
-    public UsersController(IUserService userService, IOptions<AppSettings> settings, IMapper mapper)
+    public UsersController(IUserService userService, IMapper mapper)
     {
         _userService = userService;
         _mapper = mapper;
