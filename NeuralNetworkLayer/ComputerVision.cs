@@ -17,8 +17,8 @@ namespace NeuralNetworkLayer
     public class ComputerVision
     {
         // Endpoint (URL) e chave de acesso (subscription key) do Computer Vision
-        static string subscriptionKey = "d32ea84703b340c1bd64101b49596d4a";
-        static string endpoint = "https://gifter-computervision.cognitiveservices.azure.com/";
+        static string subscriptionKey = "ffef98b421584701a97a535cef29a294";
+        static string endpoint = "https://gifter-cv.cognitiveservices.azure.com/";
 
         // URL para a análise de uma única imagem
         //private const string ANALYZE_URL_IMAGE = "https://cdn-1.motorsport.com/images/amp/0k783Oq0/s800/lewis-hamilton-mercedes-w13-cr.jpg";
