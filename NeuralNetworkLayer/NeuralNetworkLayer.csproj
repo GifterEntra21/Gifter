@@ -11,4 +11,9 @@
     <PackageReference Include="Microsoft.ML" Version="2.0.0-preview.22313.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Entities\Entities.csproj" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
+  </ItemGroup>
+
 </Project>

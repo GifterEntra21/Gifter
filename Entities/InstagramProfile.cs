@@ -8,6 +8,11 @@ namespace Entities
 {
     public class InstagramProfile
     {
+
+        public InstagramProfile(string username)
+        {
+            Username = username;
+        }
         public int ID { get; set; }
         public string Username { get; set; }
         public string Genre { get; set; }
