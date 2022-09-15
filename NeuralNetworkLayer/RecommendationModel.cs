@@ -8,9 +8,8 @@ using Shared;
 
 namespace NeuralNetworkLayer
 {
-    internal class RecommendationModel
+    public class RecommendationModel
     {
-        //Tag will be an externalclass by itself -- to be implemented
         internal static InstagramProfile CategorizeProfileByTags(List<TagWithCount> tags, string userName)
         {
             InstagramProfile profile = new(userName);

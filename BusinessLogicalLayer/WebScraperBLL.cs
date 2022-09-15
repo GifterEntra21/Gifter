@@ -49,5 +49,10 @@ namespace BusinessLogicalLayer
 
             return tagsWithCount;
         }
+
+        public static List<Product> GetGifts(List<TagWithCount> tags, string username)
+        {
+            return RecommendationModel.GetGifts(tags, username);
+        }
     }
 }
