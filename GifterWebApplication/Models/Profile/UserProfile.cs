@@ -12,10 +12,13 @@ namespace GifterWebApplication.Models.Profile
             CreateMap<UserDeleteViewModel, User>();
             CreateMap<UserLoginViewModel, User>();
             CreateMap<UserSelectViewModel, User>();
+            CreateMap<UserUpdateViewModel, User>();
+
             CreateMap<User ,UserInsertViewModel >();
             CreateMap<User ,UserDeleteViewModel >();
             CreateMap<User,UserLoginViewModel>();
             CreateMap<User,UserSelectViewModel>();
+            CreateMap<User, UserUpdateViewModel>();
         }
     }
 }

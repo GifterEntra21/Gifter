@@ -8,62 +8,71 @@ using GiterWebAPI.Helpers;
 using GiterWebAPI.Interfaces;
 using GiterWebAPI.Services;
 using JwtAuthentication.Server.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// configure DI for application services
+builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IUserDAL, UserServiceDAL>();
+builder.Services.AddTransient<ITokenService, TokenService>();
+builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+builder.Services.AddDbContext<GifterContextDb>(options => options.UseSqlServer("name = ConnectionStrings:GifterAlternative"));
+
+
+
+builder.Services.AddAuthentication(opt => {
+    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = "https://localhost:7008",
+            //ValidAudience = "*",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"))
+        };
+    });
+
+builder.Services.AddCors(options =>
 {
-    var services = builder.Services;
-    services.AddCors();
-    services.AddControllers();
-
-    // configure strongly typed settings object
-    services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
-
-    // configure DI for application services
-    services.AddTransient<IUserService, UserService>();
-    services.AddTransient<IAuthenticationService, AuthenticationService>();
-    services.AddTransient<IUserDAL, UserServiceDAL>();
-    services.AddTransient<ITokenService, TokenService>();
-    services.AddAutoMapper(Assembly.GetExecutingAssembly());
-
-    services.AddDbContext<GifterContextDb>(options => options.UseSqlServer("name=ConnectionStrings:GifterConnectionString"));
-
-
-}
-
-
+    options.AddPolicy("EnableCORS", builder =>
+    {
+        builder.AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
+});
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.
-builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseHttpsRedirection();
 
+app.UseCors("EnableCORS");
+app.UseAuthentication();
 app.UseAuthorization();
-{
-    // global cors policy
-    app.UseCors(x => x
-        .AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader());
 
-    // custom jwt auth middleware
-    app.UseMiddleware<JwtMiddleware>();
-
-    app.MapControllers();
-}
 app.MapControllers();
 
 app.Run();

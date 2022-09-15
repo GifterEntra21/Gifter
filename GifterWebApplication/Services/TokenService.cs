@@ -14,7 +14,7 @@ namespace JwtAuthentication.Server.Services
             var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
             var tokeOptions = new JwtSecurityToken(
-                issuer: "https://localhost:5001",
+                issuer: "https://localhost:7008",
                 audience: "https://localhost:5001",
                 claims: claims,
                 expires: DateTime.Now.AddMinutes(300),

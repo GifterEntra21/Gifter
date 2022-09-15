@@ -1,14 +1,11 @@
-﻿namespace GiterWebAPI.Controllers;
-
-using AutoMapper;
+﻿using AutoMapper;
 using Entities;
-using GifterWebApplication.Models.Authentication;
 using GifterWebApplication.Models.Users;
-using GiterWebAPI.Helpers;
 using GiterWebAPI.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authorization;
 
+namespace GiterWebAPI.Controllers;
 [ApiController]
 [Route("[controller]")]
 public class UsersController : ControllerBase
@@ -19,32 +16,52 @@ public class UsersController : ControllerBase
     {
         _userService = userService;
         _mapper = mapper;
-    }   
-
-    [Authorize]
-    [HttpGet]
-    public IActionResult GetAll()
-    {
-        var users = _userService.GetAll();
-        return Ok(users);
     }
+
+    [Authorize(Roles = "Manager")]
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var users = await _userService.GetAll();
+        return Ok(users.Item);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Insert(UserInsertViewModel _user)
     {
-        User user = _mapper.Map<User>(_user); 
+        User user = _mapper.Map<User>(_user);
         var response = await _userService.Insert(user);
         if (!response.HasSucess)
         {
             return BadRequest(response.Message);
         }
-        return Created("Criado com sucesso",response);
+        return Created("Criado com sucesso", response);
     }
-    
+
+    //[Authorize(Roles = "Manager")]
+    //[HttpDelete]
     //public async Task<IActionResult> Delete(UserDeleteViewModel _user)
     //{
     //    User user = _mapper.Map<User>(_user);
-    //    return null;
+    //    var response = await _userService.Delete(user);
+    //    if (!response.HasSucess)
+    //    {
+    //        return BadRequest(response.Message);
+    //    }
+    //    return Ok(response.Message);
     //}
 
+    //[HttpPut]
+    //[Authorize(Roles = "Manager")]
+    //public async Task<IActionResult> Update(UserUpdateViewModel _user)
+    //{
+    //    User user = _mapper.Map<User>(_user);
 
+    //    var response = await _userService.Update(user);
+    //    if (!response.HasSucess)
+    //    {
+    //        return BadRequest(response.Message);
+    //    }
+    //    return Ok(response.Message);
+    //}
 }

@@ -24,7 +24,16 @@ public class UserService : IUserService
 
     public async Task<Response> Delete(User user)
     {
-        return await _userDAL.Delete(user);
+        try
+        {
+            return await _userDAL.Delete(user);
+
+        }
+        catch (Exception ex)
+        {
+
+            return ResponseFactory.CreateInstance().CreateFailedResponse(ex);
+        }
     }
 
     public async Task<DataResponse<User>> GetAll()
@@ -34,27 +43,70 @@ public class UserService : IUserService
 
     public async Task<SingleResponse<User>> GetById(int id)
     {
-        return await _userDAL.GetById(id);
+        try
+        {
+            return await _userDAL.GetById(id);
+
+        }
+        catch (Exception ex)
+        {
+
+            return ResponseFactory.CreateInstance().CreateSingleNotFoundIdResponse<User>(null);
+        }
     }
 
     public async Task<SingleResponse<User>> Login(User username)
     {
-        return await _userDAL.Login(username);
+        try
+        {
+            return await _userDAL.Login(username);
+        }
+        catch (Exception ex)
+        {
+
+            return ResponseFactory.CreateInstance().CreateSingleNotFoundIdResponse<User>(null);
+        }
     }
 
     public async Task<Response> Insert(User user)
     {
+        try
+        {
+            return await _userDAL.Insert(user);
 
-        return await _userDAL.Insert(user);
+        }
+        catch (Exception ex)
+        {
+
+            return ResponseFactory.CreateInstance().CreateFailedResponse(ex);
+        }
     }
 
     public async Task<Response> Update(User user)
     {
-        return await _userDAL.Update(user);
+        try
+        {
+            return await _userDAL.Update(user);
+
+        }
+        catch (Exception ex)
+        {
+
+            return ResponseFactory.CreateInstance().CreateFailedResponse(ex);
+        }
     }
 
     public async Task<SingleResponse<User>> GetByUsername(User model)
     {
-        return await _userDAL.GetByUsername(model);
+        try
+        {
+            return await _userDAL.GetByUsername(model);
+
+        }
+        catch (Exception ex)
+        {
+
+            return ResponseFactory.CreateInstance().CreateSingleNotFoundIdResponse<User>(null);
+        }
     }
 }

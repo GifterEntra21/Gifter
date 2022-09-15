@@ -21,7 +21,6 @@ namespace Entities
 
         public DateTime? RefreshTokenExpiryTime { get; set; }
 
-        public string? AcessToken { get; set; }
 
         [JsonIgnore]
         public string Password { get; set; }

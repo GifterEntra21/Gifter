@@ -106,7 +106,7 @@ namespace DataAccessLayer.Services
             userDb.IsActive = user.IsActive;
             userDb.RefreshToken = user.RefreshToken;
             userDb.RefreshTokenExpiryTime = user.RefreshTokenExpiryTime;
-            userDb.AcessToken = user.AcessToken;
+           
 
             try
             {

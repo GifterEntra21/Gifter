@@ -39,13 +39,13 @@ namespace GifterWebApplication.Controllers
             //aqui tem coisa dando errado 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, "string"),
+                new Claim(ClaimTypes.Name, user.Item.Username),
                 new Claim(ClaimTypes.Role, "Manager")
             };
             var accessToken = _tokenService.GenerateAccessToken(claims);
             var refreshToken = _tokenService.GenerateRefreshToken();
 
-            user.Item.AcessToken = accessToken;
+            //user.Item.AcessToken = accessToken;
             user.Item.RefreshToken = refreshToken;
             user.Item.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
 

@@ -24,7 +24,7 @@ namespace DataAccessLayer.Mappings
 
             builder.Property(p => p.RefreshTokenExpiryTime).IsUnicode(false);
 
-            builder.Property(p => p.AcessToken).IsUnicode(false);
+            //builder.Property(p => p.AcessToken).IsUnicode(false);
 
     
 

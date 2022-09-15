@@ -2,6 +2,7 @@
 using GiterWebAPI.Helpers;
 using Shared.Responses;
 using BusinessLogicalLayer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GiterWebAPI.Controllers
 {
@@ -14,7 +15,7 @@ namespace GiterWebAPI.Controllers
 
         [HttpGet("/Pictures")]        
         [ProducesResponseType(404)]
-        [Authorize]
+        [Authorize(Roles = "Manager")]
         [ProducesResponseType(302, Type = typeof(DataResponse<string>))]
         public async Task<IActionResult> GetTags()
         {

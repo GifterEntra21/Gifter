@@ -38,9 +38,7 @@ namespace GifterWebApplication.Controllers
             var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken);
             var username = principal.Identity.Name; //this is mapped to the Name claim by default
 
-            //var user = _userContext.LoginModels.SingleOrDefault(u => u.UserName == username);
-            //aqui ta dando errado, pq o username ta chegando nulo por algum motivo
-            var user = _userService.GetByUsername(new User {Username = "string" });
+            var user = _userService.GetByUsername(new User {Username = username });
 
             if (user == null || user.Result.Item.RefreshToken != refreshToken || user.Result.Item.RefreshTokenExpiryTime <= DateTime.Now)
                 return BadRequest("Invalid client request");
@@ -60,16 +58,17 @@ namespace GifterWebApplication.Controllers
 
         [HttpPost, Authorize]
         [Route("revoke")]
-        public IActionResult Revoke()
+        public async Task<IActionResult> Revoke()
         {
             var username = User.Identity.Name;
 
-            var user = _userService.GetByUsername(new User { Username = username });
+            var user = await _userService.GetByUsername(new User { Username = username });
             if (user == null) return BadRequest();
 
-            user.Result.Item.RefreshToken = null;
+            user.Item.RefreshToken = null;
+            user.Item.RefreshTokenExpiryTime = null;
 
-            _userService.Update(new User { Username = username });
+            _userService.Update(user.Item);
 
             return NoContent();
         }
