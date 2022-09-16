@@ -67,28 +67,15 @@ namespace NeuralNetworkLayer
             InstagramProfile profile = CategorizeProfileByTags(tags, username);
             List<Product> gifts = new List<Product>();
 
-
-            if (profile.Genre == "anime")
+            if(profile.Genre == "anime" || profile.Genre == "exoteric" || profile.Genre == "sport")
             {
-                gifts.Add(new Product("anime"));
-                //gifts = ProductsDAL.GetProducts where genre == anime
-            }
-            else if (profile.Genre == "exoteric")
-            {
-                gifts.Add(new Product("exoteric"));
-                //gifts = ProductsDAL.GetProducts where genre == exoteric
-            }
-            else if (profile.Genre == "sport")
-            {
-                gifts.Add(new Product("sport"));
-                //gifts = ProductsDAL.GetProducts where genre == sport
+                gifts.Add(new Product(profile.Genre));
             }
             else
             {
                 gifts.Add(new Product("generic"));
-                //gifts = ProductsDAL.GetProducts where genre == generic
-            }
 
+            }
             return gifts;
         }
 
