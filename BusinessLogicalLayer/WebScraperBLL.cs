@@ -10,25 +10,23 @@ namespace BusinessLogicalLayer
         public static async Task<List<TagWithCount>> Scrape(string profile)
         {
             ComputerVision vision = new ComputerVision();
-            var scrape = WebScraperDAL.ScrapeInstagramWithDefaultAccount(false, profile);
+            var scrape = WebScraperDAL.ScrapeInstagramWithDefaultAccount(true, profile);
             List<ImageTag> tags = await vision.CheckTags(scrape);
             List<string> tagsNames = new List<string>();
-            for (int i = 0; i < tags.Count; i++)
-            {
-                for (int j = 0; j < WordsBlacklist.Blacklist.Count; j++)
-                {
-                    if (tags[i].Name == WordsBlacklist.Blacklist[j] || tags[i].Confidence < 0.75)
-                    {
-                        tags.Remove(tags[i]);
-                        i--;
-                        break;
-                    }
-                }
-            }
-
             foreach (var tag in tags)
             {
                 tagsNames.Add(tag.Name);
+            }
+
+            // Verifica as tags da lista e remove da lista aquelas que estão na blacklist
+            for (int i = 0; i < NegativeParameters.NegativeList.Count; i++)
+            {
+                int indexToRemove = tagsNames.IndexOf(NegativeParameters.NegativeList[i]);
+                if (indexToRemove >= 0)
+                {
+                    tagsNames.RemoveAt(indexToRemove);
+                    i--;
+                }
             }
 
             List<TagWithCount> tagsWithCount = new List<TagWithCount>();
