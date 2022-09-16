@@ -28,24 +28,24 @@ namespace DataAccessLayer
 
             //opens the website
             WebDriverWait wait = new WebDriverWait(driver, new TimeSpan(0, 0, 30));
-            driver.Navigate().GoToUrl("https://www.instagram.com/" + profile);
-            wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("/ html/body/div[1]/div/div/div/div[1]/div/div/div/div[1]/section/nav/div[2]/div/div/div[3]/div/div[2]/div[1]/a/button"))).Click();
+            driver.Navigate().GoToUrl("https://www.instagram.com/" );
 
 
             //waits and targets the username and password inputs
-            IWebElement username = wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("/html/body/div[1]/section/main/div/div/div[1]/div[2]/form/div/div[1]/div/label/input")));
-            IWebElement password = wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("/html/body/div[1]/section/main/div/div/div[1]/div[2]/form/div/div[2]/div/label/input")));
+            IWebElement username = wait.Until(ExpectedConditions.ElementToBeClickable(By.Name("username")));
+            IWebElement password = wait.Until(ExpectedConditions.ElementToBeClickable(By.Name("password")));
 
 
             //writes the account's username and password and clicks to login
             username.SendKeys(DotEnv.DEFAULT_USERNAME);
             password.SendKeys(DotEnv.DEFAULT_PASSWORD);
 
-            wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("/html/body/div[1]/section/main/div/div/div[1]/div[2]/form/div/div[3]/button"))).Click();
+            wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("button[type='submit']"))).Click();
 
 
             //searches the user profile
-            wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("/html/body/div[1]/section/main/div/div/div/div/button"))).Click();
+            wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("/html/body/div[1]/section/nav/div[2]/div/div/div[3]/div/div[3]/div/button")));
+            driver.Navigate().GoToUrl("https://www.instagram.com/" + profile);
 
 
 
@@ -71,6 +71,9 @@ namespace DataAccessLayer
             {
                 sources.Add(img.GetAttribute("src").ToString());
             }
+
+            driver.Close();
+
             return sources.SkipLast(1).ToList();
         }
 

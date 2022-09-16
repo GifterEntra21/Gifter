@@ -10,7 +10,7 @@ namespace NeuralNetworkLayer
 {
     public class RecommendationModel
     {
-        internal static InstagramProfile CategorizeProfileByTags(List<TagWithCount> tags, string userName)
+        private static InstagramProfile CategorizeProfileByTags(List<TagWithCount> tags, string userName)
         {
             InstagramProfile profile = new(userName);
 
@@ -70,18 +70,22 @@ namespace NeuralNetworkLayer
 
             if (profile.Genre == "anime")
             {
+                gifts.Add(new Product("anime"));
                 //gifts = ProductsDAL.GetProducts where genre == anime
             }
             else if (profile.Genre == "exoteric")
             {
+                gifts.Add(new Product("exoteric"));
                 //gifts = ProductsDAL.GetProducts where genre == exoteric
             }
             else if (profile.Genre == "sport")
             {
+                gifts.Add(new Product("sport"));
                 //gifts = ProductsDAL.GetProducts where genre == sport
             }
             else
             {
+                gifts.Add(new Product("generic"));
                 //gifts = ProductsDAL.GetProducts where genre == generic
             }
 
