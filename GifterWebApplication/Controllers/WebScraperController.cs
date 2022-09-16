@@ -36,5 +36,24 @@ namespace GiterWebAPI.Controllers
             return Ok(retorno);
         }
 
+        [HttpGet("/Gifts")]
+        [ProducesResponseType(404)]
+        //[Authorize]
+        [ProducesResponseType(302, Type = typeof(DataResponse<string>))]
+        public async Task<IActionResult> GetGifts(string profile)
+        {
+
+            List<TagWithCount> tags = await WebScraperBLL.Scrape(profile);
+            List<Product> gifts = WebScraperBLL.GetGifts(tags, profile);
+
+            
+            if (gifts == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(gifts);
+        }
+
     }
 }
