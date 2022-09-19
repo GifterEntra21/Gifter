@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataAccessLayer;
 using Entities;
 using Shared;
 
@@ -62,19 +63,19 @@ namespace NeuralNetworkLayer
             return profile;
         }
 
-        public static List<Product> GetGifts(List<TagWithCount> tags, string username)
+        public static async Task<List<Product>> GetGifts(List<TagWithCount> tags, string username)
         {
             InstagramProfile profile = CategorizeProfileByTags(tags, username);
             List<Product> gifts = new List<Product>();
 
             if(profile.Genre == "anime" || profile.Genre == "exoteric" || profile.Genre == "sport")
             {
-                gifts.Add(new Product(profile.Genre));
+                
+               gifts = await CosmosDb.QueryProducts(profile.Genre);
             }
             else
             {
-                gifts.Add(new Product("generic"));
-
+                gifts = await CosmosDb.QueryProducts("generic");
             }
             return gifts;
         }
