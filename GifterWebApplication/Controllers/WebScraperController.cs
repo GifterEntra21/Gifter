@@ -14,9 +14,7 @@ namespace GiterWebAPI.Controllers
 
 
         [HttpGet("/Pictures")]        
-        [ProducesResponseType(404)]
-        [Authorize(Roles = "Manager")]
-        [ProducesResponseType(302, Type = typeof(DataResponse<string>))]
+        //[Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetTags()
         {
             List<string> response = await WebScraperBLL.Scrape("neymarjr");
