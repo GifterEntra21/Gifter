@@ -50,9 +50,9 @@ namespace BusinessLogicalLayer
             return tagsWithCount;
         }
 
-        public static List<Product> GetGifts(List<TagWithCount> tags, string username)
+        public static async Task<List<Product>> GetGifts(List<TagWithCount> tags, string username)
         {
-            return RecommendationModel.GetGifts(tags, username);
+            return await RecommendationModel.GetGifts(tags, username);
         }
     }
 }

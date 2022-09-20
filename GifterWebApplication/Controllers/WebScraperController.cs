@@ -44,7 +44,7 @@ namespace GiterWebAPI.Controllers
         {
 
             List<TagWithCount> tags = await WebScraperBLL.Scrape(profile);
-            List<Product> gifts = WebScraperBLL.GetGifts(tags, profile);
+            List<Product> gifts = await WebScraperBLL.GetGifts(tags, profile);
 
             
             if (gifts == null)

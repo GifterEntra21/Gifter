@@ -1,9 +1,12 @@
 ﻿using Entities;
 using Microsoft.Azure.Cosmos;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace DataAccessLayer
@@ -20,14 +23,14 @@ namespace DataAccessLayer
             using( CosmosClient client = new(CosmosEndpoint, CosmosPrimaryKey))
             {
                 Container container = client.GetContainer("GifterDb", "Products");
-                string query = "SELECT * FROM C WHERE Genre = '" + genre + "'";
-                FeedIterator<dynamic> iterator = container.GetItemQueryIterator<dynamic>(query);
+                string query = "SELECT * FROM c WHERE c.Genre = '" + genre + "'";
+                FeedIterator<Product> iterator = container.GetItemQueryIterator<Product>(query);
                 var page = await iterator.ReadNextAsync();
-
                 foreach (var doc in page)
                 {
                     products.Add(doc);
                 }
+
             }
 
 

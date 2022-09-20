@@ -44,7 +44,7 @@ namespace DataAccessLayer
 
 
             //searches the user profile
-            wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("/html/body/div[1]/section/nav/div[2]/div/div/div[3]/div/div[3]/div/button")));
+            wait.Until(ExpectedConditions.ElementToBeClickable(By.ClassName("_acuj")));
             driver.Navigate().GoToUrl("https://www.instagram.com/" + profile);
 
 
@@ -62,7 +62,7 @@ namespace DataAccessLayer
 
             }
 
-            //O DOM ATUALIZA E TAMO PERDENDENDO AS IMAGENS DE CIMA QUANDO DESCEMOS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+           
 
             var imgs = driver.FindElements(By.TagName("img"));
             List<string> sources = new();
