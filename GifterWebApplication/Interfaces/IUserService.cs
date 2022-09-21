@@ -7,8 +7,8 @@ namespace GiterWebAPI.Interfaces
     public interface IUserService
     {
         AuthenticationResponse Authenticate(AuthenticationRequest model);
-        IEnumerable<User> GetAll();
-        User GetById(int id);
+        IEnumerable<APIUser> GetAll();
+        APIUser GetById(int id);
 
     }
 }

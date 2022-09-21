@@ -10,7 +10,7 @@ namespace BusinessLogicalLayer
         public static async Task<List<TagWithCount>> Scrape(string profile)
         {
             ComputerVision vision = new ComputerVision();
-            var scrape = WebScraperDAL.ScrapeInstagramWithDefaultAccount(false, profile);
+            var scrape = await WebScraperDAL.ScrapeInstagramWithDefaultAccount(false, profile);
             List<ImageTag> tags = await vision.CheckTags(scrape);
             List<string> tagsNames = new List<string>();
             foreach (var tag in tags)
@@ -19,9 +19,9 @@ namespace BusinessLogicalLayer
             }
 
             // Verifica as tags da lista e remove da lista aquelas que estão na blacklist
-            for (int i = 0; i < NegativeParameters.NegativeList.Count; i++)
+            for (int i = 0; i < BanishedTags.BanishedTagsList.Count; i++)
             {
-                int indexToRemove = tagsNames.IndexOf(NegativeParameters.NegativeList[i]);
+                int indexToRemove = tagsNames.IndexOf(BanishedTags.BanishedTagsList[i]);
                 if (indexToRemove >= 0)
                 {
                     tagsNames.RemoveAt(indexToRemove);

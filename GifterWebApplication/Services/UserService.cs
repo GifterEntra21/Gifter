@@ -16,9 +16,9 @@ using System.Text;
 public class UserService : IUserService
 {
     // users hardcoded for simplicity, store in a db with hashed passwords in production applications
-    private List<User> _users = new List<User>
+    private List<APIUser> _users = new List<APIUser>
     {
-        new User { Id = 1, FirstName = "Test", LastName = "User", Username = "test", Password = "test" }
+        new APIUser()
     };
 
     private readonly AppSettings _appSettings;
@@ -38,29 +38,29 @@ public class UserService : IUserService
         // authentication successful so generate jwt token
         var token = generateJwtToken(user);
 
-        return new AuthenticationResponse(user, token);
+        return new AuthenticationResponse("", "");
     }
 
-    public IEnumerable<User> GetAll()
+    public IEnumerable<APIUser> GetAll()
     {
         return _users;
     }
 
-    public User GetById(int id)
+    public APIUser GetById(int id)
     {
-        return _users.FirstOrDefault(x => x.Id == id);
+        return _users.FirstOrDefault(x => x.ID == id);
     }
 
     // helper methods
 
-    private string generateJwtToken(User user)
+    private string generateJwtToken(APIUser user)
     {
         // generate token that is valid for 7 days
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
+            Subject = new ClaimsIdentity(new[] { new Claim("id", user.ID.ToString()) }),
             Expires = DateTime.UtcNow.AddDays(7),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };

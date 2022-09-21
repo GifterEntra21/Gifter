@@ -68,15 +68,8 @@ namespace NeuralNetworkLayer
             InstagramProfile profile = CategorizeProfileByTags(tags, username);
             List<Product> gifts = new List<Product>();
 
-            if(profile.Genre == "anime" || profile.Genre == "exoteric" || profile.Genre == "sport")
-            {
-                
-               gifts = await CosmosDb.QueryProducts(profile.Genre);
-            }
-            else
-            {
-                gifts = await CosmosDb.QueryProducts("generic");
-            }
+            gifts = await CosmosDb.GetProducts(profile.Genre);
+
             return gifts;
         }
 

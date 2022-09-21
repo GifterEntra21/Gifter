@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using Entities;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
@@ -11,7 +12,7 @@ namespace DataAccessLayer
 
     public static class WebScraperDAL
     {
-        public static List<string> ScrapeInstagramWithDefaultAccount(bool headless, string profile)
+        public static  async Task<List<string>> ScrapeInstagramWithDefaultAccount(bool headless, string profile)
         {
 
             FirefoxOptions options = new();
@@ -37,8 +38,9 @@ namespace DataAccessLayer
 
 
             //writes the account's username and password and clicks to login
-            username.SendKeys(DotEnv.DEFAULT_USERNAME);
-            password.SendKeys(DotEnv.DEFAULT_PASSWORD);
+            SocialMediaAccount sca = await CosmosDb.GetInstagramAccount();
+            username.SendKeys(sca.Email);
+            password.SendKeys(sca.Password);
 
             wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("button[type='submit']"))).Click();
 
@@ -48,19 +50,18 @@ namespace DataAccessLayer
             driver.Navigate().GoToUrl("https://www.instagram.com/" + profile);
 
 
-
             //scrolls down to scrape more images
             //maybe the index could be a parameter, so the user could define how much they want to scroll
 
             wait.Until(ExpectedConditions.ElementToBeClickable(By.ClassName("_aabd")));
 
             //target all images on the page
-            for (int i = 1; i < 6; i++)
-            {
-                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath($"/html/body/div[1]/div/div/div/div[1]/div/div/div/div[1]/section/main/div/div[3]/article/div[1]/div/div[{i}]")));
-                driver.ExecuteScript("window.scrollTo(0, 4000);");
+            //for (int i = 1; i < 6; i++)
+            //{
+            //    wait.Until(ExpectedConditions.ElementIsVisible(By.XPath($"/html/body/div[1]/div/div/div/div[1]/div/div/div/div[1]/section/main/div/div[3]/article/div[1]/div/div[{i}]")));
+            //    driver.ExecuteScript("window.scrollTo(0, 4000);");
 
-            }
+            //}
 
            
 
@@ -72,7 +73,7 @@ namespace DataAccessLayer
                 sources.Add(img.GetAttribute("src").ToString());
             }
 
-            driver.Close();
+            driver.Quit();
 
             return sources.SkipLast(1).ToList();
         }

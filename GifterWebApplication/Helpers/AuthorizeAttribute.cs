@@ -10,7 +10,7 @@ namespace GiterWebAPI.Helpers
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            var user = (User)context.HttpContext.Items["User"];
+            var user = (APIUser)context.HttpContext.Items["User"];
             if (user == null)
             {
                 // not logged in
