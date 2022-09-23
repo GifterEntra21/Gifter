@@ -1,38 +1,67 @@
-﻿namespace GiterWebAPI.Controllers;
-
-using GiterWebAPI.Helpers;
+﻿using AutoMapper;
+using Entities;
+using GifterWebApplication.Models.Users;
 using GiterWebAPI.Interfaces;
-using GiterWebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authorization;
 
+namespace GiterWebAPI.Controllers;
 [ApiController]
 [Route("[controller]")]
 public class UsersController : ControllerBase
 {
-    private IUserService _userService;
-
-    public UsersController(IUserService userService, IOptions<AppSettings> settings)
+    private readonly IUserService _userService;
+    private readonly IMapper _mapper;
+    public UsersController(IUserService userService, IMapper mapper)
     {
         _userService = userService;
-    }
-    
-    [HttpPost("authenticate")]
-    public IActionResult Authenticate(AuthenticationRequest model)
-    {
-        var response = _userService.Authenticate(model);
-
-        if (response == null)
-            return BadRequest(new { message = "Username or password is incorrect" });
-
-        return Ok(response);
+        _mapper = mapper;
     }
 
-    [Authorize]
+    [Authorize(Roles = "Manager")]
     [HttpGet]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll()
     {
-        var users = _userService.GetAll();
-        return Ok(users);
+        var users = await _userService.GetAll();
+        return Ok(users.Item);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> Insert(UserInsertViewModel _user)
+    {
+        User user = _mapper.Map<User>(_user);
+        var response = await _userService.Insert(user);
+        if (!response.HasSucess)
+        {
+            return BadRequest(response.Message);
+        }
+        return Created("Criado com sucesso", response);
+    }
+
+    //[Authorize(Roles = "Manager")]
+    //[HttpDelete]
+    //public async Task<IActionResult> Delete(UserDeleteViewModel _user)
+    //{
+    //    User user = _mapper.Map<User>(_user);
+    //    var response = await _userService.Delete(user);
+    //    if (!response.HasSucess)
+    //    {
+    //        return BadRequest(response.Message);
+    //    }
+    //    return Ok(response.Message);
+    //}
+
+    //[HttpPut]
+    //[Authorize(Roles = "Manager")]
+    //public async Task<IActionResult> Update(UserUpdateViewModel _user)
+    //{
+    //    User user = _mapper.Map<User>(_user);
+
+    //    var response = await _userService.Update(user);
+    //    if (!response.HasSucess)
+    //    {
+    //        return BadRequest(response.Message);
+    //    }
+    //    return Ok(response.Message);
+    //}
 }

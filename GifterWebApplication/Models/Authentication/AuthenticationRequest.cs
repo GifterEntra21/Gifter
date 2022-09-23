@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-namespace GiterWebAPI.Models
+namespace GifterWebApplication.Models.Authentication
 {
     public class AuthenticationRequest
     {
@@ -8,5 +8,7 @@ namespace GiterWebAPI.Models
 
         [Required]
         public string Password { get; set; }
+
+
     }
 }
