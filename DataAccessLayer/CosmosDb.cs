@@ -1,6 +1,7 @@
 ﻿using Entities;
 using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json.Converters;
+using Shared.Responses;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -16,50 +17,52 @@ namespace DataAccessLayer
         private static string CosmosEndpoint = "https://gifter-cosmos.documents.azure.com:443/";
         private static string CosmosPrimaryKey = "z0NHDlMzcRt0UYPl8erRzTiGQdJL6jJfiPjN5LbG34csnVljrwBX4noolwNH68I3I6L1W8KjqFGOePVjzE0Y6g==";
 
-        public static async Task<List<Product>> GetProducts(string genre)
+        private static async Task<DataResponse<T>> DataConnectAndQuery<T>(string query)
         {
-            List<Product> products = new List<Product>();
+            CosmosClient client = new(CosmosEndpoint, CosmosPrimaryKey);
 
-            using( CosmosClient client = new(CosmosEndpoint, CosmosPrimaryKey))
+            Container container = client.GetContainer("GifterDb", "WebScrapeDefaultAccounts");
+
+            FeedIterator<T> iterator = container.GetItemQueryIterator<T>(query);
+            var doc = await iterator.ReadNextAsync();
+
+            List<T> items = new List<T>();
+            foreach (T item in doc)
             {
-                Container container = client.GetContainer("GifterDb", "Products");
-                string query = "SELECT * FROM c WHERE c.Genre = '" + genre + "'";
-                FeedIterator<Product> iterator = container.GetItemQueryIterator<Product>(query);
-                var doc = await iterator.ReadNextAsync();
-
-                foreach (Product p in doc)
-                {
-                    products.Add(p);
-                }
-
+                items.Add(item);
             }
 
+            return new DataResponse<T>("Sucesso", true, items, new Exception());
+        }
 
-            return products;
+        private static async Task<SingleResponse<T>> SingleConnectAndQuery<T>(string query)
+        {
+            CosmosClient client = new(CosmosEndpoint, CosmosPrimaryKey);
+
+            Container container = client.GetContainer("GifterDb", "WebScrapeDefaultAccounts");
+
+            FeedIterator<T> iterator = container.GetItemQueryIterator<T>(query);
+
+            FeedResponse<T> doc = await iterator.ReadNextAsync();
+
+            T item = doc.FirstOrDefault(); 
+            
+            return new SingleResponse<T>("Sucesso", true, item, new Exception());
+
+        }
+        public static async Task<List<Product>> GetProducts(string genre)
+        {
+            string query = "SELECT * FROM c WHERE c.Genre = '" + genre + "'";
+            DataResponse<Product> response = await DataConnectAndQuery<Product>(query);
+
+            return response.Item;
         }
 
         public static async Task<SocialMediaAccount> GetInstagramAccount()
         {
-            SocialMediaAccount sca = new();
-
-             using( CosmosClient client = new(CosmosEndpoint, CosmosPrimaryKey))
-            {
-                Container container = client.GetContainer("GifterDb", "WebScrapeDefaultAccounts");
-                string query = "SELECT * FROM c WHERE c.site = 'instagram.com'";
-                FeedIterator<SocialMediaAccount> iterator = container.GetItemQueryIterator<SocialMediaAccount>(query);
-                var doc = await iterator.ReadNextAsync();
-
-                foreach (var item in doc)
-                {
-                    sca.Email = item.Email;
-                    sca.Password = item.Password;
-                }
-
-            }
-                return sca;
-
-
-            
+            SingleResponse<SocialMediaAccount> response = await SingleConnectAndQuery<SocialMediaAccount>("SELECT * FROM c WHERE c.site = 'instagram.com'");
+             return response.Item;
+   
         }
     }
 }
