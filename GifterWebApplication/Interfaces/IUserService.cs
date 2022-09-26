@@ -1,14 +1,14 @@
 ﻿using Entities;
-using GiterWebAPI.Models;
-using Shared.Resposes;
+using GifterWebApplication.Models.Authentication;
+using Shared.Responses;
 
 namespace GiterWebAPI.Interfaces
 {
     public interface IUserService
     {
         AuthenticationResponse Authenticate(AuthenticationRequest model);
-        IEnumerable<APIUser> GetAll();
-        APIUser GetById(int id);
+        Task<DataResponse<APIUser>> GetAll();
+        Task<SingleResponse<APIUser>> GetById(string id);
 
     }
 }

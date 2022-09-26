@@ -1,5 +1,6 @@
-﻿using AutoMapper;
+﻿
 using Entities;
+using Shared.Responses;
 using GifterWebApplication.Models.Users;
 using GiterWebAPI.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -11,11 +12,10 @@ namespace GiterWebAPI.Controllers;
 public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
-    private readonly IMapper _mapper;
-    public UsersController(IUserService userService, IMapper mapper)
+
+    public UsersController(IUserService userService)
     {
         _userService = userService;
-        _mapper = mapper;
     }
 
     [Authorize(Roles = "Manager")]
@@ -29,39 +29,15 @@ public class UsersController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Insert(UserInsertViewModel _user)
     {
-        User user = _mapper.Map<User>(_user);
-        var response = await _userService.Insert(user);
+        //User user = _mapper.Map<User>(_user);
+        //var response = await _userService.Insert(user);
+        // response so pra compilar
+        Response response = new("", true, new Exception());
+        
         if (!response.HasSucess)
         {
             return BadRequest(response.Message);
         }
         return Created("Criado com sucesso", response);
     }
-
-    //[Authorize(Roles = "Manager")]
-    //[HttpDelete]
-    //public async Task<IActionResult> Delete(UserDeleteViewModel _user)
-    //{
-    //    User user = _mapper.Map<User>(_user);
-    //    var response = await _userService.Delete(user);
-    //    if (!response.HasSucess)
-    //    {
-    //        return BadRequest(response.Message);
-    //    }
-    //    return Ok(response.Message);
-    //}
-
-    //[HttpPut]
-    //[Authorize(Roles = "Manager")]
-    //public async Task<IActionResult> Update(UserUpdateViewModel _user)
-    //{
-    //    User user = _mapper.Map<User>(_user);
-
-    //    var response = await _userService.Update(user);
-    //    if (!response.HasSucess)
-    //    {
-    //        return BadRequest(response.Message);
-    //    }
-    //    return Ok(response.Message);
-    //}
 }

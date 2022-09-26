@@ -36,7 +36,7 @@ namespace GifterWebApplication.Controllers
             var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken);
             var username = principal.Identity.Name; //this is mapped to the Name claim by default
 
-            var user = _userService.GetByUsername(new User {Username = username });
+            var user = _userService.GetById("786e59d9-56ed-4099-80c4-f5f5400dc48a");
 
             if (user == null || user.Result.Item.RefreshToken != refreshToken || user.Result.Item.RefreshTokenExpiryTime <= DateTime.Now)
                 return BadRequest("Invalid client request");
@@ -45,7 +45,7 @@ namespace GifterWebApplication.Controllers
             var newRefreshToken = _tokenService.GenerateRefreshToken();
 
             user.Result.Item.RefreshToken = newRefreshToken;
-            _userService.Update(user.Result.Item);
+   
 
             return Ok(new AuthenticationResponse()
             {
@@ -60,13 +60,12 @@ namespace GifterWebApplication.Controllers
         {
             var username = User.Identity.Name;
 
-            var user = await _userService.GetByUsername(new User { Username = username });
+            var user = await _userService.GetById("786e59d9-56ed-4099-80c4-f5f5400dc48a");
             if (user == null) return BadRequest();
 
             user.Item.RefreshToken = null;
             user.Item.RefreshTokenExpiryTime = null;
 
-            _userService.Update(user.Item);
 
             return NoContent();
         }

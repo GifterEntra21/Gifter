@@ -1,12 +1,13 @@
 namespace GiterWebAPI.Services;
 
 using Entities;
+using GifterWebApplication.Models.Authentication;
 using GiterWebAPI.Helpers;
 using GiterWebAPI.Interfaces;
-using GiterWebAPI.Models;
+
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Shared.Resposes;
+using Shared.Responses;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -38,18 +39,20 @@ public class UserService : IUserService
         // authentication successful so generate jwt token
         var token = generateJwtToken(user);
 
-        return new AuthenticationResponse("", "");
+        return new AuthenticationResponse();
     }
 
-    public IEnumerable<APIUser> GetAll()
+    public async Task<DataResponse<APIUser>> GetAll()
     {
-        return _users;
+        DataResponse<APIUser> users = new("", true, _users, new Exception());
+        return users ;
     }
 
-    public APIUser GetById(int id)
+    public async Task<SingleResponse<APIUser>> GetById(string id)
     {
-        return _users.FirstOrDefault(x => x.ID == id);
+        return new SingleResponse<APIUser>("", true, new APIUser(), new Exception()); 
     }
+
 
     // helper methods
 
