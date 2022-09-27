@@ -37,9 +37,7 @@ namespace GiterWebAPI.Controllers
         }
 
         [HttpGet("/Gifts")]
-        [ProducesResponseType(404)]
         //[Authorize]
-        [ProducesResponseType(302, Type = typeof(DataResponse<string>))]
         public async Task<IActionResult> GetGifts(string profile)
         {
 
