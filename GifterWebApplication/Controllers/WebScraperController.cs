@@ -13,27 +13,24 @@ namespace GiterWebAPI.Controllers
     {
 
 
-        [HttpGet("/Pictures")]        
+        [HttpGet("/MostCommonTag")]        
         [ProducesResponseType(404)]
         //[Authorize]
         [ProducesResponseType(302, Type = typeof(DataResponse<string>))]
-        public async Task<IActionResult> GetTags()
+        public async Task<IActionResult> GetTags(string user)
         {
             // response é a lista que contém todas as tags encontradas nas imagens do perfil, sendo que
             // elas foram transformadas em uma classe que possui como propriedades o nome e a quantidade de cada tag
 
-            // trabalhe com a variável response conforme for necessário
-            string user = "neymarjr";
             List<TagWithCount> response = await WebScraperBLL.Scrape(user);
             TagWithCount tag = response.MaxBy(t => t.Count);
 
-            string retorno = $"The user @{user} likes: " + tag.Name;
             if (response == null)
             {
                 return NotFound();
             }
 
-            return Ok(retorno);
+            return Ok(tag.Name);
         }
 
         [HttpGet("/Gifts")]
@@ -42,7 +39,8 @@ namespace GiterWebAPI.Controllers
         {
 
             List<TagWithCount> tags = await WebScraperBLL.Scrape(profile);
-            List<Product> gifts = await WebScraperBLL.GetGifts(tags, profile);
+            DataResponse<Product> giftsResponse = await WebScraperBLL.GetGifts(tags, profile);
+            List<Product> gifts = giftsResponse.Item;
 
             
             if (gifts == null)

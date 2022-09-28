@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DataAccessLayer;
 using Entities;
 using Shared;
+using Shared.Responses;
 
 namespace NeuralNetworkLayer
 {
@@ -63,14 +64,15 @@ namespace NeuralNetworkLayer
             return profile;
         }
 
-        public static async Task<List<Product>> GetGifts(List<TagWithCount> tags, string username)
+        public static async Task<DataResponse<Product>> GetGifts(List<TagWithCount> tags, string username)
         {
             InstagramProfile profile = CategorizeProfileByTags(tags, username);
-            List<Product> gifts = new List<Product>();
 
-            gifts = await CosmosDb.GetProducts(profile.Genre);
+     
+            ProductDAL productDAL = new();
 
-            return gifts;
+            return await productDAL.GetByGenre(profile.Genre);
+
         }
 
     }

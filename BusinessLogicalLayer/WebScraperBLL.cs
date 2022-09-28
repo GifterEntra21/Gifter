@@ -2,6 +2,7 @@
 using Entities;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using NeuralNetworkLayer;
+using Shared.Responses;
 
 namespace BusinessLogicalLayer
 {
@@ -50,7 +51,7 @@ namespace BusinessLogicalLayer
             return tagsWithCount;
         }
 
-        public static async Task<List<Product>> GetGifts(List<TagWithCount> tags, string username)
+        public static async Task<DataResponse<Product>> GetGifts(List<TagWithCount> tags, string username)
         {
             return await RecommendationModel.GetGifts(tags, username);
         }

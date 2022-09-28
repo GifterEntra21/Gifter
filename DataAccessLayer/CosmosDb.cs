@@ -9,37 +9,55 @@ namespace DataAccessLayer
         private static string CosmosEndpoint = "https://gifter-cosmos.documents.azure.com:443/";
         private static string CosmosPrimaryKey = "z0NHDlMzcRt0UYPl8erRzTiGQdJL6jJfiPjN5LbG34csnVljrwBX4noolwNH68I3I6L1W8KjqFGOePVjzE0Y6g==";
 
-        private static async Task<DataResponse<T>> DataConnectAndQuery<T>(string query, string containerName)
+        public static async Task<DataResponse<T>> DataConnectAndQuery<T>(string query, string containerName)
         {
-            CosmosClient client = new(CosmosEndpoint, CosmosPrimaryKey);
-
-            Container container = client.GetContainer("GifterDb", containerName);
-
-            FeedIterator<T> iterator = container.GetItemQueryIterator<T>(query);
-            FeedResponse<T> doc = await iterator.ReadNextAsync();
-
-            List<T> items = new List<T>();
-            foreach (T item in doc)
+            try
             {
-                items.Add(item);
+                CosmosClient client = new(CosmosEndpoint, CosmosPrimaryKey);
+
+                Container container = client.GetContainer("GifterDb", containerName);
+
+                FeedIterator<T> iterator = container.GetItemQueryIterator<T>(query);
+                FeedResponse<T> doc = await iterator.ReadNextAsync();
+                List<T> items = new List<T>();
+
+                foreach (T item in doc)
+                {
+                    items.Add(item);
+                }
+
+                return ResponseFactory.CreateInstance().CreateSuccessDataResponse<T>(items);
+            }
+            catch (Exception ex)
+            {
+                return ResponseFactory.CreateInstance().CreateFailedDataResponse<T>(ex);
             }
 
-            return new DataResponse<T>("Sucesso", true, items, new Exception());
         }
 
-        private static async Task<SingleResponse<T>> SingleConnectAndQuery<T>(string query, string containerName)
+        public static async Task<SingleResponse<T>> SingleConnectAndQuery<T>(string query, string containerName)
         {
-            CosmosClient client = new(CosmosEndpoint, CosmosPrimaryKey);
+            try
+            {
+                CosmosClient client = new(CosmosEndpoint, CosmosPrimaryKey);
 
-            Container container = client.GetContainer("GifterDb", containerName);
+                Container container = client.GetContainer("GifterDb", containerName);
 
-            FeedIterator<T> iterator = container.GetItemQueryIterator<T>(query);
+                FeedIterator<T> iterator = container.GetItemQueryIterator<T>(query);
 
-            FeedResponse<T> doc = await iterator.ReadNextAsync();
+                FeedResponse<T> doc = await iterator.ReadNextAsync();
 
-            T item = doc.FirstOrDefault(); 
-            
-            return new SingleResponse<T>("Sucesso", true, item, new Exception());
+                T item = doc.FirstOrDefault();
+
+                return ResponseFactory.CreateInstance().CreateSuccessSingleResponse<T>(item);
+
+            }
+            catch (Exception ex)
+            {
+
+                return ResponseFactory.CreateInstance().CreateFailedSingleResponse<T>(ex);
+
+            }
 
         }
         public static async Task<List<Product>> GetProducts(string genre)
@@ -54,8 +72,8 @@ namespace DataAccessLayer
         {
             string query = "SELECT * FROM c WHERE c.site = 'instagram.com'";
             SingleResponse<SocialMediaAccount> response = await SingleConnectAndQuery<SocialMediaAccount>(query, "WebScrapeDefaultAccounts");
-             return response.Item;
-   
+            return response.Item;
+
         }
     }
 }
