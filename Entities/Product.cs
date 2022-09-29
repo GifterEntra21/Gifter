@@ -14,14 +14,9 @@ namespace Entities
 
         }
 
-        public Product(string name)
-        {
-            Name = name;
-        }
-
         public Product(string id, string name, string genre, double price, string shopURL, string image, string associatedPartner)
         {
-            ID = id;
+            id = id;
             Name = name;
             Genre = genre;
             Price = price;
@@ -30,7 +25,7 @@ namespace Entities
             AssociatedPartner = associatedPartner;
         }
 
-        public string ID { get; set; }
+        public string id { get; set; }
         public string Name { get; set; }
         public string Genre { get; set; }
         public double Price { get; set; }
