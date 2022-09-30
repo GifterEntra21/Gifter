@@ -1,4 +1,5 @@
 ﻿using Entities;
+using Entities.Interfaces;
 using Microsoft.Azure.Cosmos;
 using Shared.Responses;
 
@@ -77,14 +78,21 @@ namespace DataAccessLayer
 
         }
 
+        /// <summary>
+        /// Insert an item in the database
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="item"></param>
+        /// <param name="containerName"></param>
+        /// <returns></returns>
         public static async Task<Response> InsertItem<T>(T item, string containerName)
         {
             try
             {
-            Container container = await CosmosConnect(containerName);
-            await container.CreateItemAsync<T>(item);
-          
-            return ResponseFactory.CreateInstance().CreateSuccessResponse();
+                Container container = await CosmosConnect(containerName);
+                await container.CreateItemAsync<T>(item);
+
+                return ResponseFactory.CreateInstance().CreateSuccessResponse();
 
             }
             catch (Exception ex)
@@ -92,6 +100,22 @@ namespace DataAccessLayer
                 return ResponseFactory.CreateInstance().CreateFailedResponse(ex);
             }
 
+        }
+
+        public static async Task<Response> DeleteItem(ICosmosDbItem item, string containerName)
+        {
+            try
+            {
+                Container container = await CosmosConnect(containerName);
+                await container.DeleteItemAsync<ICosmosDbItem>(item.id, new PartitionKey(item.PartitionKey));
+
+                return ResponseFactory.CreateInstance().CreateSuccessResponse();
+
+            }
+            catch (Exception ex)
+            {
+                return ResponseFactory.CreateInstance().CreateFailedResponse(ex);
+            }
         }
 
         public static async Task<SocialMediaAccount> GetInstagramAccount()

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Shared
+﻿namespace Shared
 {
     public static class TagGenres
     {
@@ -16,6 +10,10 @@ namespace Shared
         public static List<string> AnimeTags = new List<string> { "", };
 
         public static List<string> ExotericTags = new List<string> { "", };
+
+        public static List<string> MakeUpTags = new List<string> { "", };
+
+        public static List<string> GamerTags = new List<string> { "", };
 
     }
 }

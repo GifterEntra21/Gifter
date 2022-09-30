@@ -51,5 +51,29 @@ namespace GifterWebApplication.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("/Delete")]
+        [ProducesResponseType(404)]
+        //[Authorize]
+        public async Task<IActionResult> DeleteProduct(Product product)
+        {
+            try
+            {
+                ProductBLL productBLL = new();
+                Response res = await productBLL.Delete(product);
+
+
+                if (!res.HasSucess)
+                {
+                    return NotFound(res.Exception.Message);
+                }
+
+                return Ok("Deletado com sucesso.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

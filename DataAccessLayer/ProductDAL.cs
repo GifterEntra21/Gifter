@@ -5,7 +5,7 @@ using Shared.Responses;
 
 namespace DataAccessLayer
 {
-    public class ProductDAL : IProductDAL
+    public class ProductDAL : IProduct
     {
         public async Task<DataResponse<Product>> GetAll()
         {
@@ -48,7 +48,7 @@ namespace DataAccessLayer
         {
             throw new NotImplementedException();
         }
-        public async Task<Response> Delete(string id)
+        public async Task<Response> Delete(Product product)
         {
             throw new NotImplementedException();
         }
