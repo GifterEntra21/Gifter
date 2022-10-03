@@ -40,7 +40,8 @@ namespace BusinessLogicalLayer
         {
             try
             {
-                return await CosmosDb.DeleteItem(product, "Products");
+                ProductDAL productDAL = new();
+                return await productDAL.Delete(product);
 
             }
             catch (Exception ex)

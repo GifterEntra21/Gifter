@@ -12,11 +12,11 @@ namespace GiterWebAPI.Controllers
     {
 
 
-        [HttpGet("/MostCommonTag")]        
+        [HttpGet("/MostCommonTag")]
         [ProducesResponseType(404)]
         //[Authorize]
         [ProducesResponseType(302, Type = typeof(DataResponse<string>))]
-        public async Task<IActionResult> GetTags(string user)
+        public async Task<IActionResult> GetMostCommonTag(string user)
         {
             // response é a lista que contém todas as tags encontradas nas imagens do perfil, sendo que
             // elas foram transformadas em uma classe que possui como propriedades o nome e a quantidade de cada tag
@@ -32,23 +32,30 @@ namespace GiterWebAPI.Controllers
             return Ok(tag.Name);
         }
 
-        [HttpGet("/Gifts")]
+        [HttpGet("/AllTags")]
+        [ProducesResponseType(404)]
         //[Authorize]
-        public async Task<IActionResult> GetGifts(string profile)
+        [ProducesResponseType(302, Type = typeof(DataResponse<string>))]
+        public async Task<IActionResult> GetAllTags(string user)
         {
-
-            List<TagWithCount> tags = await WebScraperBLL.Scrape(profile);
-            DataResponse<Product> giftsResponse = await WebScraperBLL.GetGifts(tags, profile);
-            List<Product> gifts = giftsResponse.Item;
-
-            
-            if (gifts == null)
+            try
             {
-                return NotFound();
+
+                List<TagWithCount> response = await WebScraperBLL.Scrape(user);
+
+                if (response == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(response);
+
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500,ResponseFactory.CreateInstance().CreateFailedResponse(ex));
 
-            return Ok(gifts);
+            }
         }
-
     }
 }

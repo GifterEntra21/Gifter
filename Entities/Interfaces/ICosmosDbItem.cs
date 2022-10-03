@@ -9,6 +9,6 @@ namespace Entities.Interfaces
     public interface ICosmosDbItem
     {
         public string id { get; set; }
-        public string PartitionKey { get; set; }
+        public string PartitionKey { get; }
     }
 }

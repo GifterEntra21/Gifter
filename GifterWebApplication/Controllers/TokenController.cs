@@ -49,7 +49,7 @@ namespace GifterWebApplication.Controllers
 
             return Ok(new AuthenticationResponse()
             {
-                Token = newAccessToken,
+                AccessToken = newAccessToken,
                 RefreshToken = newRefreshToken
             });
         }

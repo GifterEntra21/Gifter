@@ -50,7 +50,14 @@ namespace DataAccessLayer
         }
         public async Task<Response> Delete(Product product)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await CosmosDb.DeleteItem(product, "Products");
+            }
+            catch (Exception ex)
+            {
+                return ResponseFactory.CreateInstance().CreateFailedResponse(ex);
+            }
         }
     }
 }

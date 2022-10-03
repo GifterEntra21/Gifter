@@ -8,7 +8,7 @@ namespace GifterWebApplication.Controllers
 {
     public class ProductController : Controller
     {
-        [HttpGet("/Gifts222")]
+        [HttpGet("/Gifts")]
         //[Authorize]
         public async Task<IActionResult> GetGifts(string profile)
         {
@@ -26,7 +26,7 @@ namespace GifterWebApplication.Controllers
             return Ok(gifts);
         }
 
-        [HttpGet("/Insert")]
+        [HttpPost("/Insert")]
         [ProducesResponseType(404)]
         //[Authorize]
         public async Task<IActionResult> InsertProduct(Product product)
@@ -52,7 +52,7 @@ namespace GifterWebApplication.Controllers
             }
         }
 
-        [HttpGet("/Delete")]
+        [HttpDelete("/Delete")]
         [ProducesResponseType(404)]
         //[Authorize]
         public async Task<IActionResult> DeleteProduct(Product product)
