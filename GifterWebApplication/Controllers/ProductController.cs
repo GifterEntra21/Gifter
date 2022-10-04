@@ -33,11 +33,8 @@ namespace GifterWebApplication.Controllers
         {
             try
             {
-                product.id = Guid.NewGuid().ToString();
-
-                ProductDAL productDAL = new();
-                Response res = await productDAL.Insert(product);
-
+                ProductBLL productBLL = new();
+                Response res = await productBLL.Insert(product);
 
                 if (!res.HasSucess)
                 {
@@ -45,6 +42,31 @@ namespace GifterWebApplication.Controllers
                 }
 
                 return Ok("Cadastrado com sucesso.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("/Update")]
+        [ProducesResponseType(404)]
+        //[Authorize]
+        public async Task<IActionResult> UpdateProduct(Product product)
+        {
+            try
+            {
+
+                ProductBLL productBLL = new();
+                Response res = await productBLL.Update(product);
+
+
+                if (!res.HasSucess)
+                {
+                    return NotFound(res.Exception.Message);
+                }
+
+                return Ok("Atualizado com sucesso.");
             }
             catch (Exception ex)
             {

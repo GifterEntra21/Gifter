@@ -1,6 +1,6 @@
 ﻿using DataAccessLayer.Interfaces;
 using Entities;
-
+using Entities.Interfaces;
 using Shared.Responses;
 
 namespace DataAccessLayer
@@ -44,9 +44,16 @@ namespace DataAccessLayer
 
         }
 
-        public async Task<Response> Update(string oldProductId, Product updatedProduct)
+        public async Task<Response> Update(Product updatedProduct)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await CosmosDb.UpdateItem<Product>(updatedProduct, "Products");
+            }
+            catch (Exception ex)
+            {
+                return ResponseFactory.CreateInstance().CreateFailedResponse(ex);
+            }
         }
         public async Task<Response> Delete(Product product)
         {
@@ -59,5 +66,7 @@ namespace DataAccessLayer
                 return ResponseFactory.CreateInstance().CreateFailedResponse(ex);
             }
         }
+
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer;
 using DataAccessLayer.Interfaces;
 using Entities;
+using Entities.Interfaces;
 using Shared.Responses;
 
 namespace BusinessLogicalLayer
@@ -29,12 +30,32 @@ namespace BusinessLogicalLayer
 
         public async Task<Response> Insert(Product product)
         {
-            throw new NotImplementedException();
+            try
+            {
+                product.id = Guid.NewGuid().ToString();
+
+                ProductDAL productDAL = new();
+                return await productDAL.Insert(product);
+
+            }
+            catch (Exception ex)
+            {
+                return ResponseFactory.CreateInstance().CreateFailedResponse(ex);
+            }
         }
 
-        public async Task<Response> Update(string oldProductId, Product updatedProduct)
+        public async Task<Response> Update(Product updatedProduct)
         {
-            throw new NotImplementedException();
+            try
+            {
+                ProductDAL productDAL = new();
+                return await productDAL.Update(updatedProduct);
+
+            }
+            catch (Exception ex)
+            {
+                return ResponseFactory.CreateInstance().CreateFailedResponse(ex);
+            }
         }
         public async Task<Response> Delete(Product product)
         {

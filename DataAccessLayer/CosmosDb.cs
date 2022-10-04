@@ -13,7 +13,7 @@ namespace DataAccessLayer
         private static async Task<Container> CosmosConnect(string containerName)
         {
             CosmosClient client = new(CosmosEndpoint, CosmosPrimaryKey);
-
+            
             return client.GetContainer("GifterDb", containerName);
         }
 
@@ -117,6 +117,32 @@ namespace DataAccessLayer
                 return ResponseFactory.CreateInstance().CreateFailedResponse(ex);
             }
         }
+
+
+        /// <summary>
+        /// Updates an already existing item in the database
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="NewItem">The updated object to be sent, must have the ID unaltered</param>
+        /// <param name="containerName"></param>
+        /// <returns></returns>
+        public static async Task<Response> UpdateItem<T>(T updatedItem, string containerName)
+        {
+            try
+            {
+                Container container = await CosmosConnect(containerName);
+                await container.UpsertItemAsync<T>(updatedItem);
+
+       
+                return ResponseFactory.CreateInstance().CreateSuccessResponse();
+
+            }
+            catch (Exception ex)
+            {
+                return ResponseFactory.CreateInstance().CreateFailedResponse(ex);
+            }
+        }
+
 
         public static async Task<SocialMediaAccount> GetInstagramAccount()
         {
