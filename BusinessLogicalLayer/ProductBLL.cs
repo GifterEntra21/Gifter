@@ -10,29 +10,65 @@ namespace BusinessLogicalLayer
     {
         public async Task<DataResponse<Product>> GetAll()
         {
-            throw new NotImplementedException();
+            try
+            {
+                ProductDAL productDAL = new();
+                return await productDAL.GetAll();
+
+            }   
+            catch (Exception ex)
+            {
+                return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(ex);
+            }
         }
 
         public async Task<DataResponse<Product>> GetByAssociatedPartner(string AssociatedPartner)
         {
-            throw new NotImplementedException();
+            try
+            {
+                ProductDAL productDAL = new();
+                return await productDAL.GetByAssociatedPartner(AssociatedPartner);
+
+            }
+            catch (Exception ex)
+            {
+                return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(ex);
+            }
         }
 
         public async Task<DataResponse<Product>> GetByGenre(string genre)
         {
-            throw new NotImplementedException();
+            try
+            {
+                ProductDAL productDAL = new();
+                return await productDAL.GetByGenre(genre);
+
+            }
+            catch (Exception ex)
+            {
+                return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(ex);
+            }
         }
 
         public async Task<SingleResponse<Product>> GetById(string id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                ProductDAL productDAL = new();
+                return await productDAL.GetById(id);
+
+            }
+            catch (Exception ex)
+            {
+                return ResponseFactory.CreateInstance().CreateFailedSingleResponse<Product>(ex);
+            }
         }
 
         public async Task<Response> Insert(Product product)
         {
             try
             {
-                product.id = Guid.NewGuid().ToString();
+                
 
                 ProductDAL productDAL = new();
                 return await productDAL.Insert(product);
@@ -44,12 +80,12 @@ namespace BusinessLogicalLayer
             }
         }
 
-        public async Task<Response> Update(Product updatedProduct)
+        public async Task<Response> Upsert(Product updatedProduct)
         {
             try
             {
                 ProductDAL productDAL = new();
-                return await productDAL.Update(updatedProduct);
+                return await productDAL.Upsert(updatedProduct);
 
             }
             catch (Exception ex)

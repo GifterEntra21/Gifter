@@ -8,15 +8,15 @@ namespace Shared.Responses
 {
     public class Response
     {
-        public Response(string message, bool hasSucess, Exception exception)
+        public Response(string message, bool hasSuccess, Exception exception)
         {
             Message = message;
-            HasSucess = hasSucess;
+            HasSuccess = hasSuccess;
             Exception = exception;
         }
 
         public string Message { get; set; }
-        public bool HasSucess { get; set; }
+        public bool HasSuccess { get; set; }
         public Exception Exception {get;set;}
     }
 }

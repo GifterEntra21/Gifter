@@ -120,13 +120,13 @@ namespace DataAccessLayer
 
 
         /// <summary>
-        /// Updates an already existing item in the database
+        /// If the item already exists on the database, it is updated, if not, it is created 
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="NewItem">The updated object to be sent, must have the ID unaltered</param>
         /// <param name="containerName"></param>
         /// <returns></returns>
-        public static async Task<Response> UpdateItem<T>(T updatedItem, string containerName)
+        public static async Task<Response> UpsertItem<T>(T updatedItem, string containerName)
         {
             try
             {

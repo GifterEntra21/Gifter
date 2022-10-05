@@ -8,17 +8,17 @@ namespace Shared.Responses
 {
     public class DataResponse<T>
     {
-        public DataResponse(string message, bool hasSucces, List<T> item, Exception exception)
+        public DataResponse(string message, bool hasSuccess, List<T> itemList, Exception exception)
         {
             Message = message;
-            HasSucces = hasSucces;
-            Item = item;
+            HasSuccess = hasSuccess;
+            ItemList = itemList;
             Exception = exception;
         }
 
         public string Message { get; set; }
-        public bool HasSucces { get; set; }
-        public List<T> Item { get; set; }
+        public bool HasSuccess { get; set; }
+        public List<T> ItemList { get; set; }
         public Exception Exception { get; set; }
 
     }

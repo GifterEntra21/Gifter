@@ -7,7 +7,7 @@ namespace DataAccessLayer.Interfaces
     public interface IProduct
     {
         Task<Response> Insert(Product product);
-        Task<Response> Update(Product updatedProduct);
+        Task<Response> Upsert(Product updatedProduct);
         Task<Response> Delete(Product product);
         Task<DataResponse<Product>> GetAll();
         Task<DataResponse<Product>> GetByGenre(string genre);

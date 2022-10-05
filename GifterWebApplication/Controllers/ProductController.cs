@@ -8,22 +8,44 @@ namespace GifterWebApplication.Controllers
 {
     public class ProductController : Controller
     {
-        [HttpGet("/Gifts")]
+        [HttpGet("/ProductsByGenre")]
         //[Authorize]
-        public async Task<IActionResult> GetGifts(string profile)
+        public async Task<IActionResult> GetGifts(string genre)
         {
 
-            List<TagWithCount> tags = await WebScraperBLL.Scrape(profile);
-            DataResponse<Product> giftsResponse = await WebScraperBLL.GetGifts(tags, profile);
-            List<Product> gifts = giftsResponse.Item;
+            ProductBLL productBLL = new();
+            DataResponse<Product> res = await productBLL.GetByGenre(genre.ToLower());
 
 
-            if (gifts == null)
+            if (res.ItemList == null)
             {
                 return NotFound();
             }
 
-            return Ok(gifts);
+            return Ok(res.ItemList);
+        }
+
+        [HttpGet("/AllProducts")]
+        //[Authorize]
+        public async Task<IActionResult> GetAllProducts()
+        {
+
+            try
+            {
+                ProductBLL productBLL = new();
+                DataResponse<Product> res = await productBLL.GetAll();
+
+                if (!res.HasSuccess)
+                {
+                    return NotFound(res.Exception.Message);
+                }
+
+                return Ok(res.ItemList);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("/Insert")]
@@ -36,7 +58,7 @@ namespace GifterWebApplication.Controllers
                 ProductBLL productBLL = new();
                 Response res = await productBLL.Insert(product);
 
-                if (!res.HasSucess)
+                if (!res.HasSuccess)
                 {
                     return NotFound(res.Exception.Message);
                 }
@@ -49,7 +71,7 @@ namespace GifterWebApplication.Controllers
             }
         }
 
-        [HttpPut("/Update")]
+        [HttpPut("/Upsert")]
         [ProducesResponseType(404)]
         //[Authorize]
         public async Task<IActionResult> UpdateProduct(Product product)
@@ -58,10 +80,10 @@ namespace GifterWebApplication.Controllers
             {
 
                 ProductBLL productBLL = new();
-                Response res = await productBLL.Update(product);
+                Response res = await productBLL.Upsert(product);
 
 
-                if (!res.HasSucess)
+                if (!res.HasSuccess)
                 {
                     return NotFound(res.Exception.Message);
                 }
@@ -85,7 +107,7 @@ namespace GifterWebApplication.Controllers
                 Response res = await productBLL.Delete(product);
 
 
-                if (!res.HasSucess)
+                if (!res.HasSuccess)
                 {
                     return NotFound(res.Exception.Message);
                 }

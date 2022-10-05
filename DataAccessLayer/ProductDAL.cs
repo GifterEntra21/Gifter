@@ -44,11 +44,11 @@ namespace DataAccessLayer
 
         }
 
-        public async Task<Response> Update(Product updatedProduct)
+        public async Task<Response> Upsert(Product updatedProduct)
         {
             try
             {
-                return await CosmosDb.UpdateItem<Product>(updatedProduct, "Products");
+                return await CosmosDb.UpsertItem<Product>(updatedProduct, "Products");
             }
             catch (Exception ex)
             {

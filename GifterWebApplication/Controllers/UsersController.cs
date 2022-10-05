@@ -23,7 +23,7 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var users = await _userService.GetAll();
-        return Ok(users.Item);
+        return Ok(users.ItemList);
     }
 
     [HttpPost]
@@ -34,7 +34,7 @@ public class UsersController : ControllerBase
         // response so pra compilar
         Response response = new("", true, new Exception());
         
-        if (!response.HasSucess)
+        if (!response.HasSuccess)
         {
             return BadRequest(response.Message);
         }
