@@ -3,10 +3,17 @@ using Entities;
 using Entities.Interfaces;
 using Shared.Responses;
 
-namespace DataAccessLayer
+namespace DataAccessLayer.Impl
 {
-    public class ProductDAL : IProduct
+    public class ProductDAL : IProductDAL
     {
+        //public readonly IProductDAL _ProductService;
+
+        //public ProductDAL(IProductDAL productService)
+        //{
+        //    _ProductService = productService;
+        //}
+
         public async Task<DataResponse<Product>> GetAll()
         {
             return await CosmosDb.GetItemList<Product>("SELECT * FROM c", "Products");

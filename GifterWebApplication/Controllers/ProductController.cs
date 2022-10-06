@@ -1,21 +1,26 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Shared.Responses;
-using BusinessLogicalLayer;
 using Entities;
-using DataAccessLayer;
+using BusinessLogicalLayer.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GifterWebApplication.Controllers
 {
     public class ProductController : Controller
     {
+
+        public readonly IProductBLL _ProductService;
+
+        public ProductController(IProductBLL productService)
+        {
+            _ProductService = productService;
+        }
+
         [HttpGet("/ProductsByGenre")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> GetGifts(string genre)
         {
-
-            ProductBLL productBLL = new();
-            DataResponse<Product> res = await productBLL.GetByGenre(genre.ToLower());
-
+            DataResponse<Product> res = await _ProductService.GetByGenre(genre.ToLower());
 
             if (res.ItemList == null)
             {
@@ -26,14 +31,13 @@ namespace GifterWebApplication.Controllers
         }
 
         [HttpGet("/AllProducts")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> GetAllProducts()
         {
 
             try
             {
-                ProductBLL productBLL = new();
-                DataResponse<Product> res = await productBLL.GetAll();
+                DataResponse<Product> res = await _ProductService.GetAll();
 
                 if (!res.HasSuccess)
                 {
@@ -50,13 +54,13 @@ namespace GifterWebApplication.Controllers
 
         [HttpPost("/Insert")]
         [ProducesResponseType(404)]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> InsertProduct(Product product)
         {
             try
             {
-                ProductBLL productBLL = new();
-                Response res = await productBLL.Insert(product);
+                
+                Response res = await _ProductService.Insert(product);
 
                 if (!res.HasSuccess)
                 {
@@ -73,14 +77,14 @@ namespace GifterWebApplication.Controllers
 
         [HttpPut("/Upsert")]
         [ProducesResponseType(404)]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> UpdateProduct(Product product)
         {
             try
             {
 
-                ProductBLL productBLL = new();
-                Response res = await productBLL.Upsert(product);
+               
+                Response res = await _ProductService.Upsert(product);
 
 
                 if (!res.HasSuccess)
@@ -98,13 +102,13 @@ namespace GifterWebApplication.Controllers
 
         [HttpDelete("/Delete")]
         [ProducesResponseType(404)]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> DeleteProduct(Product product)
         {
             try
             {
-                ProductBLL productBLL = new();
-                Response res = await productBLL.Delete(product);
+               
+                Response res = await _ProductService.Delete(product);
 
 
                 if (!res.HasSuccess)

@@ -1,52 +1,74 @@
-using GiterWebAPI.Helpers;
-using GiterWebAPI.Interfaces;
-using GiterWebAPI.Services;
+using BusinessLogicalLayer.Impl;
+using BusinessLogicalLayer.Interfaces;
+using DataAccessLayer.Impl;
+using DataAccessLayer.Interfaces;
+using JwtAuthentication.Server.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Reflection;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddTransient<IUserBLL, UserBLL>();
+builder.Services.AddTransient<IUserDAL, UserDAL>();
+
+builder.Services.AddTransient<IProductBLL, ProductBLL>();
+builder.Services.AddTransient<IProductDAL, ProductDAL>();
+
+builder.Services.AddTransient<ITokenService, TokenService>();
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+builder.Services.AddAuthentication(opt => {
+    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = "https://localhost:7008",
+            //ValidAudience = "*",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345")),
+            //Define como padrão o desvio de relogio para zero, o default é de 5 minutos, por isso o token acaba sendo valido pelo tempo de
+            //expires + 5mim
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
+builder.Services.AddCors(options =>
 {
-    var services = builder.Services;
-    services.AddCors();
-    services.AddControllers();
-
-    // configure strongly typed settings object
-    services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
-
-    // configure DI for application services
-    services.AddScoped<IUserService, UserService>();
-}
-
-
+    options.AddPolicy("EnableCORS", builder =>
+    {
+        builder.AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
+});
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.
-builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseHttpsRedirection();
 
+app.UseCors("EnableCORS");
+app.UseAuthentication();
 app.UseAuthorization();
-{
-    // global cors policy
-    app.UseCors(x => x
-        .AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader());
 
-    // custom jwt auth middleware
-    app.UseMiddleware<JwtMiddleware>();
-
-    app.MapControllers();
-}
 app.MapControllers();
 
 app.Run();

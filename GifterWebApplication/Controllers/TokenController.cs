@@ -1,7 +1,7 @@
 ﻿
+using BusinessLogicalLayer.Interfaces;
 using Entities;
 using GifterWebApplication.Models.Authentication;
-using GiterWebAPI.Interfaces;
 using JwtAuthentication.Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -13,11 +13,11 @@ namespace GifterWebApplication.Controllers
     [ApiController]
     public class TokenController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IUserBLL _userService;
 
         private readonly ITokenService _tokenService;
 
-        public TokenController(IUserService userService, ITokenService tokenService)
+        public TokenController(IUserBLL userService, ITokenService tokenService)
         {
             _userService = userService;
             _tokenService = tokenService;
@@ -34,9 +34,9 @@ namespace GifterWebApplication.Controllers
             string refreshToken = tokenApiModel.RefreshToken;
 
             var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken);
-            var username = principal.Identity.Name; //this is mapped to the Name claim by default
+            var _username = principal.Identity.Name; //this is mapped to the Name claim by default
 
-            var user = _userService.GetById("786e59d9-56ed-4099-80c4-f5f5400dc48a");
+            var user = _userService.GetByUsername(new APIUser(){ Username = _username});
 
             if (user == null || user.Result.Item.RefreshToken != refreshToken || user.Result.Item.RefreshTokenExpiryTime <= DateTime.Now)
                 return BadRequest("Invalid client request");
@@ -45,7 +45,8 @@ namespace GifterWebApplication.Controllers
             var newRefreshToken = _tokenService.GenerateRefreshToken();
 
             user.Result.Item.RefreshToken = newRefreshToken;
-   
+
+            _userService.Update(user.Result.Item);
 
             return Ok(new AuthenticationResponse()
             {
@@ -58,9 +59,9 @@ namespace GifterWebApplication.Controllers
         [Route("revoke")]
         public async Task<IActionResult> Revoke()
         {
-            var username = User.Identity.Name;
+            var _username = User.Identity.Name;
 
-            var user = await _userService.GetById("786e59d9-56ed-4099-80c4-f5f5400dc48a");
+            var user = await _userService.GetByUsername(new APIUser { Username = _username});
             if (user == null) return BadRequest();
 
             user.Item.RefreshToken = null;

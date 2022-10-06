@@ -1,10 +1,14 @@
 ﻿using Entities;
-using Entities.Interfaces;
 using Shared.Responses;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace DataAccessLayer.Interfaces
+namespace BusinessLogicalLayer.Interfaces
 {
-    public interface IProduct
+    public interface IProductBLL
     {
         Task<Response> Insert(Product product);
         Task<Response> Upsert(Product updatedProduct);

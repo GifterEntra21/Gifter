@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataAccessLayer;
+﻿
+using DataAccessLayer.Impl;
+using DataAccessLayer.Interfaces;
 using Entities;
 using Shared;
 using Shared.Responses;
@@ -12,6 +9,13 @@ namespace NeuralNetworkLayer
 {
     public class RecommendationModel
     {
+        //public readonly IProductDAL _ProductService;
+
+        //public RecommendationModel(IProductDAL productService)
+        //{
+        //    _ProductService = productService;
+        //}
+
         private static InstagramProfile CategorizeProfileByTags(List<TagWithCount> tags, string userName)
         {
             InstagramProfile profile = new(userName);

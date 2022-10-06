@@ -1,19 +1,28 @@
-﻿using DataAccessLayer;
+﻿using BusinessLogicalLayer.Interfaces;
+using DataAccessLayer;
+using DataAccessLayer.Impl;
 using DataAccessLayer.Interfaces;
 using Entities;
 using Entities.Interfaces;
 using Shared.Responses;
 
-namespace BusinessLogicalLayer
+namespace BusinessLogicalLayer.Impl
 {
-    public class ProductBLL : IProduct
+    public class ProductBLL : IProductBLL
     {
+
+        public readonly IProductDAL _ProductService;
+
+        public ProductBLL(IProductDAL productService)
+        {
+            _ProductService = productService;
+        }
+
         public async Task<DataResponse<Product>> GetAll()
         {
             try
             {
-                ProductDAL productDAL = new();
-                return await productDAL.GetAll();
+                return await _ProductService.GetAll();
 
             }   
             catch (Exception ex)
@@ -26,8 +35,8 @@ namespace BusinessLogicalLayer
         {
             try
             {
-                ProductDAL productDAL = new();
-                return await productDAL.GetByAssociatedPartner(AssociatedPartner);
+
+                return await _ProductService.GetByAssociatedPartner(AssociatedPartner);
 
             }
             catch (Exception ex)
@@ -40,8 +49,7 @@ namespace BusinessLogicalLayer
         {
             try
             {
-                ProductDAL productDAL = new();
-                return await productDAL.GetByGenre(genre);
+                return await _ProductService.GetByGenre(genre);
 
             }
             catch (Exception ex)
@@ -54,8 +62,7 @@ namespace BusinessLogicalLayer
         {
             try
             {
-                ProductDAL productDAL = new();
-                return await productDAL.GetById(id);
+                return await _ProductService.GetById(id);
 
             }
             catch (Exception ex)
@@ -70,8 +77,7 @@ namespace BusinessLogicalLayer
             {
                 
 
-                ProductDAL productDAL = new();
-                return await productDAL.Insert(product);
+                return await _ProductService.Insert(product);
 
             }
             catch (Exception ex)
@@ -84,8 +90,7 @@ namespace BusinessLogicalLayer
         {
             try
             {
-                ProductDAL productDAL = new();
-                return await productDAL.Upsert(updatedProduct);
+                return await _ProductService.Upsert(updatedProduct);
 
             }
             catch (Exception ex)
@@ -97,8 +102,7 @@ namespace BusinessLogicalLayer
         {
             try
             {
-                ProductDAL productDAL = new();
-                return await productDAL.Delete(product);
+                return await _ProductService.Delete(product);
 
             }
             catch (Exception ex)

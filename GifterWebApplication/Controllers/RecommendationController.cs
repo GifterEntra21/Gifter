@@ -2,13 +2,14 @@
 using Shared.Responses;
 using BusinessLogicalLayer;
 using Entities;
+using BusinessLogicalLayer.Impl;
 
 namespace GiterWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
 
-    public class ReccommendationController : Controller
+    public class RecommendationController : Controller
     {
         /// <summary>
         /// Scrape the profile for images and recommend gifts based on that

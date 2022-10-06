@@ -1,7 +1,8 @@
 ﻿
+using AutoMapper;
+using BusinessLogicalLayer.Interfaces;
 using Entities;
 using GifterWebApplication.Models.Authentication;
-using GiterWebAPI.Interfaces;
 using JwtAuthentication.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -12,15 +13,17 @@ namespace GifterWebApplication.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IUserService _userService;
-        
+        private readonly IUserBLL _userService;     
         private readonly ITokenService _tokenService;
+        private readonly IMapper _mapper;
 
-        public AuthController(IUserService userService,  ITokenService tokenService)
+        public AuthController(IUserBLL userService,  ITokenService tokenService, IMapper mapper)
         {
             _userService = userService;
 
             _tokenService = tokenService;
+
+            _mapper = mapper;
         }
 
         [HttpPost, Route("login")]
@@ -30,35 +33,29 @@ namespace GifterWebApplication.Controllers
             {
                 return BadRequest("Invalid client request");
             }
-           /* var _loginModel = _mapper.Map<APIUser>(loginModel);
+            APIUser _loginModel = _mapper.Map<APIUser>(loginModel);
 
             var user = await _userService.Login(_loginModel);
-            if (user is null)
-
-            */
-
-            //fazer a verificação de login com o cosmos
+            if (user.Item is null)
+            {
                 return Unauthorized();
+            }
+            //fazer a verificação de login com o cosmos
 
-             
+
             var claims = new List<Claim>
             {
-
-               // new Claim(ClaimTypes.Name, user.Item.Username),
+                new Claim(ClaimTypes.Name, user.Item.Username),
                 new Claim(ClaimTypes.Role, "Manager")
             };
             var accessToken = _tokenService.GenerateAccessToken(claims);
             var refreshToken = _tokenService.GenerateRefreshToken();
 
-            //user.Item.AcessToken = accessToken;
-            
-            //user.Item.RefreshToken = refreshToken;
-            //user.Item.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+            user.Item.RefreshToken = refreshToken;
+            user.Item.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
 
-            //_userContext.SaveChanges();
+            await _userService.Update(user.Item);
             //substituir por update?
-            
-            //await _userService.Update(user.Item);
 
             return Ok(new AuthenticationResponse
             {

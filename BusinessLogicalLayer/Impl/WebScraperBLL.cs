@@ -1,10 +1,10 @@
-﻿using DataAccessLayer;
+﻿using DataAccessLayer.Impl;
 using Entities;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using NeuralNetworkLayer;
 using Shared.Responses;
 
-namespace BusinessLogicalLayer
+namespace BusinessLogicalLayer.Impl
 {
     public static class WebScraperBLL
     {
