@@ -30,7 +30,7 @@ namespace DataAccessLayer.Impl
         {
             try
             {
-                string query = $"SELECT * FROM c WHERE c.Username = '{model.Username} and c.Password = {model.Password}'";
+                string query = $"SELECT * FROM c WHERE c.Username = '{model.Username}' AND c.Password = '{model.Password}'";
                 return await CosmosDb.GetSingleItem<APIUser>(query, "APIUsers");
             }
             catch (Exception ex)

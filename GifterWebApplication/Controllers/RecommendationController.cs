@@ -3,6 +3,7 @@ using Shared.Responses;
 using BusinessLogicalLayer;
 using Entities;
 using BusinessLogicalLayer.Impl;
+using BusinessLogicalLayer.Interfaces;
 
 namespace GiterWebAPI.Controllers
 {
@@ -11,6 +12,14 @@ namespace GiterWebAPI.Controllers
 
     public class RecommendationController : Controller
     {
+
+        public readonly IWebScrapperBLL _WebScrapperService;
+
+        public RecommendationController(IWebScrapperBLL webScrapperService)
+        {
+            _WebScrapperService = webScrapperService;
+        }
+
         /// <summary>
         /// Scrape the profile for images and recommend gifts based on that
         /// </summary>
@@ -21,8 +30,8 @@ namespace GiterWebAPI.Controllers
         public async Task<IActionResult> GetGifts(string profile)
         {
 
-            List<TagWithCount> tags = await WebScraperBLL.Scrape(profile);
-            DataResponse<Product> giftsResponse = await WebScraperBLL.GetGifts(tags, profile);
+            List<TagWithCount> tags = await _WebScrapperService.Scrape(profile);
+            DataResponse<Product> giftsResponse = await _WebScrapperService.GetGifts(tags, profile);
             List<Product> gifts = giftsResponse.ItemList;
 
 
@@ -43,7 +52,7 @@ namespace GiterWebAPI.Controllers
                 // response é a lista que contém todas as tags encontradas nas imagens do perfil, sendo que
                 // elas foram transformadas em uma classe que possui como propriedades o nome e a quantidade de cada tag
 
-                List<TagWithCount> response = await WebScraperBLL.Scrape(user);
+                List<TagWithCount> response = await _WebScrapperService.Scrape(user);
                 TagWithCount tag = response.MaxBy(t => t.Count);
 
                 if (response == null)
@@ -62,7 +71,7 @@ namespace GiterWebAPI.Controllers
                 try
                 {
 
-                    List<TagWithCount> response = await WebScraperBLL.Scrape(user);
+                    List<TagWithCount> response = await _WebScrapperService.Scrape(user);
 
                     if (response == null)
                     {

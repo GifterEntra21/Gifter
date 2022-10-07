@@ -1,22 +1,21 @@
-﻿
-using DataAccessLayer.Impl;
-using DataAccessLayer.Interfaces;
+﻿using DataAccessLayer.Interfaces;
 using Entities;
+using NeuralNetworkLayer.Interfaces;
 using Shared;
 using Shared.Responses;
 
-namespace NeuralNetworkLayer
+namespace NeuralNetworkLayer.Impl
 {
-    public class RecommendationModel
+    public class RecommendationModel:IRecommendationModel
     {
-        //public readonly IProductDAL _ProductService;
+        public readonly IProductDAL _ProductService;
 
-        //public RecommendationModel(IProductDAL productService)
-        //{
-        //    _ProductService = productService;
-        //}
+        public RecommendationModel(IProductDAL productService)
+        {
+            _ProductService = productService;
+        }
 
-        private static InstagramProfile CategorizeProfileByTags(List<TagWithCount> tags, string userName)
+        private InstagramProfile CategorizeProfileByTags(List<TagWithCount> tags, string userName)
         {
             InstagramProfile profile = new(userName);
 
@@ -68,14 +67,12 @@ namespace NeuralNetworkLayer
             return profile;
         }
 
-        public static async Task<DataResponse<Product>> GetGifts(List<TagWithCount> tags, string username)
+        public async Task<DataResponse<Product>> GetGifts(List<TagWithCount> tags, string username)
         {
             InstagramProfile profile = CategorizeProfileByTags(tags, username);
 
-     
-            ProductDAL productDAL = new();
 
-            return await productDAL.GetByGenre(profile.Genre);
+            return await _ProductService.GetByGenre(profile.Genre);
 
         }
 

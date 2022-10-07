@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using DataAccessLayer.Interfaces;
 using Entities;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
@@ -8,11 +9,9 @@ using Shared;
 
 namespace DataAccessLayer.Impl
 {
-
-
-    public static class WebScraperDAL
+    public class WebScrapperDAL : IWebScrapperDAL
     {
-        public static  async Task<List<string>> ScrapeInstagramWithDefaultAccount(bool headless, string profile)
+        public  async Task<List<string>> ScrapeInstagramWithDefaultAccount(bool headless, string profile)
         {
 
             FirefoxOptions options = new();

@@ -7,12 +7,6 @@ namespace DataAccessLayer.Impl
 {
     public class ProductDAL : IProductDAL
     {
-        //public readonly IProductDAL _ProductService;
-
-        //public ProductDAL(IProductDAL productService)
-        //{
-        //    _ProductService = productService;
-        //}
 
         public async Task<DataResponse<Product>> GetAll()
         {

@@ -5,6 +5,8 @@ using DataAccessLayer.Interfaces;
 using JwtAuthentication.Server.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using NeuralNetworkLayer.Impl;
+using NeuralNetworkLayer.Interfaces;
 using System.Reflection;
 using System.Text;
 
@@ -15,6 +17,11 @@ builder.Services.AddTransient<IUserDAL, UserDAL>();
 
 builder.Services.AddTransient<IProductBLL, ProductBLL>();
 builder.Services.AddTransient<IProductDAL, ProductDAL>();
+
+builder.Services.AddTransient<IWebScrapperBLL, WebScrapperBLL>();
+builder.Services.AddTransient<IWebScrapperDAL, WebScrapperDAL>();
+
+builder.Services.AddTransient<IRecommendationModel, RecommendationModel>();
 
 builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());

@@ -1,17 +1,29 @@
-﻿using DataAccessLayer.Impl;
+﻿using BusinessLogicalLayer.Interfaces;
+using DataAccessLayer.Impl;
+using DataAccessLayer.Interfaces;
 using Entities;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using NeuralNetworkLayer;
+using NeuralNetworkLayer.Interfaces;
 using Shared.Responses;
 
 namespace BusinessLogicalLayer.Impl
 {
-    public static class WebScraperBLL
+    public class WebScrapperBLL : IWebScrapperBLL
     {
-        public static async Task<List<TagWithCount>> Scrape(string profile)
+        public readonly IWebScrapperDAL _webScrapperService;
+        public readonly IRecommendationModel _recommendationModelService;
+
+        public WebScrapperBLL(IWebScrapperDAL webScrapperService, IRecommendationModel recommendationModelService)
+        {
+            _webScrapperService = webScrapperService;
+            _recommendationModelService = recommendationModelService;
+        }
+
+        public async Task<List<TagWithCount>> Scrape(string profile)
         {
             ComputerVision vision = new ComputerVision();
-            var scrape = await WebScraperDAL.ScrapeInstagramWithDefaultAccount(false, profile);
+            var scrape = await _webScrapperService.ScrapeInstagramWithDefaultAccount(false, profile);
             List<ImageTag> tags = await vision.CheckTags(scrape);
             List<string> tagsNames = new List<string>();
             foreach (var tag in tags)
@@ -51,9 +63,9 @@ namespace BusinessLogicalLayer.Impl
             return tagsWithCount;
         }
 
-        public static async Task<DataResponse<Product>> GetGifts(List<TagWithCount> tags, string username)
+        public async Task<DataResponse<Product>> GetGifts(List<TagWithCount> tags, string username)
         {
-            return await RecommendationModel.GetGifts(tags, username);
+            return await _recommendationModelService.GetGifts(tags, username);
         }
     }
 }
