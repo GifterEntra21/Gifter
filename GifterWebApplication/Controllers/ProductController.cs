@@ -3,6 +3,8 @@ using Shared.Responses;
 using Entities;
 using BusinessLogicalLayer.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using GifterWebApplication.Models.Products;
+using AutoMapper;
 
 namespace GifterWebApplication.Controllers
 {
@@ -10,7 +12,7 @@ namespace GifterWebApplication.Controllers
     {
 
         public readonly IProductBLL _ProductService;
-
+        private readonly IMapper _mapper;
         public ProductController(IProductBLL productService)
         {
             _ProductService = productService;
@@ -24,12 +26,14 @@ namespace GifterWebApplication.Controllers
 
             DataResponse<Product> res = await _ProductService.GetByGenre(genre.ToLower());
 
+            List<ProductSelectViewModel> products = _mapper.Map<List<ProductSelectViewModel>>(res.ItemList);
+
             if (res.ItemList == null)
             {
                 return NotFound();
             }
 
-            return Ok(res.ItemList);
+            return Ok(products);
         }
 
         [HttpGet("/AllProducts")]

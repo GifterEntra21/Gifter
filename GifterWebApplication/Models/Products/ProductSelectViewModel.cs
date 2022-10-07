@@ -2,7 +2,7 @@
 {
     public class ProductSelectViewModel
     {
-
+        public string id { get; set; }
         public string Name { get; set; }
         public string Genre { get; set; }
         public double Price { get; set; }
