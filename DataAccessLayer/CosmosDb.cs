@@ -1,16 +1,17 @@
-﻿using Entities;
+﻿using DataAccessLayer.Interfaces;
+using Entities;
 using Entities.Interfaces;
 using Microsoft.Azure.Cosmos;
 using Shared.Responses;
 
 namespace DataAccessLayer
 {
-    public class CosmosDb
+    public class CosmosDb : ICosmosDB
     {
         private static string CosmosEndpoint = "https://gifter-cosmos.documents.azure.com:443/";
         private static string CosmosPrimaryKey = "z0NHDlMzcRt0UYPl8erRzTiGQdJL6jJfiPjN5LbG34csnVljrwBX4noolwNH68I3I6L1W8KjqFGOePVjzE0Y6g==";
 
-        private static async Task<Container> CosmosConnect(string containerName)
+        private async Task<Container> CosmosConnect(string containerName)
         {
             CosmosClient client = new(CosmosEndpoint, CosmosPrimaryKey);
             
@@ -25,7 +26,7 @@ namespace DataAccessLayer
         /// <param name="query"></param>
         /// <param name="containerName"></param>
         /// <returns></returns>
-        public static async Task<DataResponse<T>> GetItemList<T>(string query, string containerName)
+        public async Task<DataResponse<T>> GetItemList<T>(string query, string containerName)
         {
             try
             {
@@ -56,7 +57,7 @@ namespace DataAccessLayer
         /// <param name="query"></param>
         /// <param name="containerName">CosmosDb container you want to connect</param>
         /// <returns></returns>
-        public static async Task<SingleResponse<T>> GetSingleItem<T>(string query, string containerName)
+        public async Task<SingleResponse<T>> GetSingleItem<T>(string query, string containerName)
         {
             try
             {
@@ -85,7 +86,7 @@ namespace DataAccessLayer
         /// <param name="item"></param>
         /// <param name="containerName"></param>
         /// <returns></returns>
-        public static async Task<Response> InsertItem<T>(T item, string containerName)
+        public async Task<Response> InsertItem<T>(T item, string containerName)
         {
             try
             {
@@ -102,7 +103,7 @@ namespace DataAccessLayer
 
         }
 
-        public static async Task<Response> DeleteItem(ICosmosDbItem item, string containerName)
+        public async Task<Response> DeleteItem(ICosmosDbItem item, string containerName)
         {
             try
             {
@@ -126,7 +127,7 @@ namespace DataAccessLayer
         /// <param name="NewItem">The updated object to be sent, must have the ID unaltered</param>
         /// <param name="containerName"></param>
         /// <returns></returns>
-        public static async Task<Response> UpsertItem<T>(T updatedItem, string containerName)
+        public async Task<Response> UpsertItem<T>(T updatedItem, string containerName)
         {
             try
             {
@@ -144,7 +145,7 @@ namespace DataAccessLayer
         }
 
 
-        public static async Task<SocialMediaAccount> GetInstagramAccount()
+        public async Task<SocialMediaAccount> GetDefaultInstagramAccount()
         {
             string query = "SELECT * FROM c WHERE c.site = 'instagram.com'";
             SingleResponse<SocialMediaAccount> response = await GetSingleItem<SocialMediaAccount>(query, "WebScrapeDefaultAccounts");

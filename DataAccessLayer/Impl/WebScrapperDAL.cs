@@ -11,6 +11,12 @@ namespace DataAccessLayer.Impl
 {
     public class WebScrapperDAL : IWebScrapperDAL
     {
+        public readonly ICosmosDB _CosmosService;
+
+        public WebScrapperDAL(ICosmosDB cosmosService)
+        {
+            _CosmosService = cosmosService;
+        }
         public  async Task<List<string>> ScrapeInstagramWithDefaultAccount(bool headless, string profile)
         {
 
@@ -37,7 +43,7 @@ namespace DataAccessLayer.Impl
 
 
             //writes the account's username and password and clicks to login
-            SocialMediaAccount sca = await CosmosDb.GetInstagramAccount();
+            SocialMediaAccount sca = await _CosmosService.GetDefaultInstagramAccount();
             username.SendKeys(sca.Email);
             password.SendKeys(sca.Password);
 

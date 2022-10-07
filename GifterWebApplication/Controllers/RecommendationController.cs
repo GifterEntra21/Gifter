@@ -4,6 +4,7 @@ using BusinessLogicalLayer;
 using Entities;
 using BusinessLogicalLayer.Impl;
 using BusinessLogicalLayer.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GiterWebAPI.Controllers
 {
@@ -20,20 +21,18 @@ namespace GiterWebAPI.Controllers
             _WebScrapperService = webScrapperService;
         }
 
-        /// <summary>
-        /// Scrape the profile for images and recommend gifts based on that
-        /// </summary>
-        /// <param name="profile"></param>
-        /// <returns></returns>
+
+
         [HttpGet("/RecommendedGifts")]
-        //[Authorize]
+        [Authorize(Roles = "Manager")]
+        [ProducesResponseType(200, Type = typeof(DataResponse<Product>))]
+        // Scrape the profile for images and recommend gifts based on that
         public async Task<IActionResult> GetGifts(string profile)
         {
-
-            List<TagWithCount> tags = await _WebScrapperService.Scrape(profile);
+            string _profile = profile.Replace("@", "");
+            List<TagWithCount> tags = await _WebScrapperService.Scrape(_profile);
             DataResponse<Product> giftsResponse = await _WebScrapperService.GetGifts(tags, profile);
             List<Product> gifts = giftsResponse.ItemList;
-
 
             if (gifts == null)
             {
@@ -44,48 +43,41 @@ namespace GiterWebAPI.Controllers
         }
 
 
-            [HttpGet("/MostCommonTag")]
-            [ProducesResponseType(404)]
-            //[Authorize]
-            public async Task<IActionResult> GetMostCommonTag(string user)
+        [HttpGet("/MostCommonTag")]
+        [Authorize(Roles = "Manager")]
+        [ProducesResponseType(200, Type = typeof(DataResponse<TagWithCount>))]
+        public async Task<IActionResult> GetMostCommonTag(string user)
+        {
+            // response é a lista que contém todas as tags encontradas nas imagens do perfil, sendo que
+            // elas foram transformadas em uma classe que possui como propriedades o nome e a quantidade de cada tag
+
+            List<TagWithCount> response = await _WebScrapperService.Scrape(user);
+            TagWithCount tag = response.MaxBy(t => t.Count);
+
+            if (response == null)
             {
-                // response é a lista que contém todas as tags encontradas nas imagens do perfil, sendo que
-                // elas foram transformadas em uma classe que possui como propriedades o nome e a quantidade de cada tag
-
-                List<TagWithCount> response = await _WebScrapperService.Scrape(user);
-                TagWithCount tag = response.MaxBy(t => t.Count);
-
-                if (response == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(tag.Name);
+                return NotFound();
             }
 
-            [HttpGet("/AllTags")]
-            [ProducesResponseType(404)]
-            //[Authorize]
-            public async Task<IActionResult> GetAllTags(string user)
+            return Ok(tag.Name);
+        }
+
+        [HttpGet("/AllTags")]
+        [Authorize(Roles = "Manager")]
+        [ProducesResponseType(200, Type = typeof(DataResponse<TagWithCount>))]
+        public async Task<IActionResult> GetAllTags(string user)
+        {
+
+            List<TagWithCount> response = await _WebScrapperService.Scrape(user);
+
+            if (response == null)
             {
-                try
-                {
-
-                    List<TagWithCount> response = await _WebScrapperService.Scrape(user);
-
-                    if (response == null)
-                    {
-                        return NotFound();
-                    }
-
-                    return Ok(response);
-
-                }
-                catch (Exception ex)
-                {
-                    return StatusCode(500, ResponseFactory.CreateInstance().CreateFailedResponse(ex));
-
-                }
+                return NotFound();
             }
+
+            return Ok(response);
+
+
         }
     }
+}

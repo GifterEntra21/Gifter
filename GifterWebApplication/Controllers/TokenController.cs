@@ -6,6 +6,7 @@ using JwtAuthentication.Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Responses;
 
 namespace GifterWebApplication.Controllers
 {
@@ -23,12 +24,14 @@ namespace GifterWebApplication.Controllers
             _tokenService = tokenService;
         }
 
-        [HttpPost]
-        [Route("refresh")]
-        public IActionResult Refresh(TokenApiModel tokenApiModel) 
+        [HttpPost("/refresh")]
+        [ProducesResponseType(200, Type = typeof(AuthenticationResponse))]
+        public IActionResult Refresh(TokenApiModel tokenApiModel)
         {
             if (tokenApiModel is null)
+            {
                 return BadRequest("Invalid client request");
+            }
 
             string accessToken = tokenApiModel.AccessToken;
             string refreshToken = tokenApiModel.RefreshToken;
@@ -36,10 +39,12 @@ namespace GifterWebApplication.Controllers
             var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken);
             var _username = principal.Identity.Name; //this is mapped to the Name claim by default
 
-            var user = _userService.GetByUsername(new APIUser(){ Username = _username});
+            var user = _userService.GetByUsername(new APIUser() { Username = _username });
 
             if (user == null || user.Result.Item.RefreshToken != refreshToken || user.Result.Item.RefreshTokenExpiryTime <= DateTime.Now)
+            {
                 return BadRequest("Invalid client request");
+            }
 
             var newAccessToken = _tokenService.GenerateAccessToken(principal.Claims);
             var newRefreshToken = _tokenService.GenerateRefreshToken();
@@ -55,19 +60,23 @@ namespace GifterWebApplication.Controllers
             });
         }
 
-        [HttpPost, Authorize]
-        [Route("revoke")]
+        [HttpPost("/revoke")]
+        [Authorize]
+        [ProducesResponseType(204)]
         public async Task<IActionResult> Revoke()
         {
             var _username = User.Identity.Name;
 
-            var user = await _userService.GetByUsername(new APIUser { Username = _username});
-            if (user == null) return BadRequest();
+            SingleResponse<APIUser> user = await _userService.GetByUsername(new APIUser { Username = _username });
+            if (user == null)
+            {
+                return BadRequest();
+            }
 
             user.Item.RefreshToken = null;
             user.Item.RefreshTokenExpiryTime = null;
 
-
+            await _userService.Update(user.Item);
             return NoContent();
         }
     }

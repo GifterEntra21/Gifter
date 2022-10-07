@@ -5,6 +5,7 @@ using Entities;
 using GifterWebApplication.Models.Authentication;
 using JwtAuthentication.Server.Services;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Responses;
 using System.Security.Claims;
 
 namespace GifterWebApplication.Controllers
@@ -26,8 +27,9 @@ namespace GifterWebApplication.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost, Route("login")]
-        public async Task<IActionResult> Login([FromBody] AuthenticationRequest loginModel)
+        [HttpPost("/Login")]
+        [ProducesResponseType(200, Type = typeof(AuthenticationResponse))]
+        public async Task<IActionResult> Login( AuthenticationRequest loginModel)
         {
             if (loginModel is null)
             {
@@ -35,7 +37,7 @@ namespace GifterWebApplication.Controllers
             }
             APIUser _loginModel = _mapper.Map<APIUser>(loginModel);
 
-            var user = await _userService.Login(_loginModel);
+            SingleResponse<APIUser> user = await _userService.Login(_loginModel);
             if (user.Item is null)
             {
                 return Unauthorized();
@@ -46,7 +48,7 @@ namespace GifterWebApplication.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Item.Username),
-                new Claim(ClaimTypes.Role, "Manager")
+                new Claim(ClaimTypes.Role, user.Item.Role.ToString())
             };
             var accessToken = _tokenService.GenerateAccessToken(claims);
             var refreshToken = _tokenService.GenerateRefreshToken();

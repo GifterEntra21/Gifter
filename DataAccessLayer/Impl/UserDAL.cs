@@ -11,12 +11,19 @@ namespace DataAccessLayer.Impl
 {
     public class UserDAL : IUserDAL
     {
+        public readonly ICosmosDB _CosmosService;
+
+        public UserDAL(ICosmosDB cosmosService)
+        {
+            _CosmosService = cosmosService;
+        }
+
         public async Task<SingleResponse<APIUser>> GetByUsername(APIUser model)
         {
             try
             {
                 string query = $"SELECT * FROM c WHERE c.Username = '{model.Username}'";
-                return await CosmosDb.GetSingleItem<APIUser>(query, "APIUsers");
+                return await _CosmosService.GetSingleItem<APIUser>(query, "APIUsers");
             }
             catch (Exception ex)
             {
@@ -31,7 +38,12 @@ namespace DataAccessLayer.Impl
             try
             {
                 string query = $"SELECT * FROM c WHERE c.Username = '{model.Username}' AND c.Password = '{model.Password}'";
-                return await CosmosDb.GetSingleItem<APIUser>(query, "APIUsers");
+                SingleResponse<APIUser> _Login = await _CosmosService.GetSingleItem<APIUser>(query, "APIUsers");
+                if (_Login.Item is null)
+                {
+                    return ResponseFactory.CreateInstance().CreateFailedSingleResponse<APIUser>(null, "Não foi possível fazer o Login");
+                }
+                return _Login;
             }
             catch (Exception ex)
             {
@@ -44,9 +56,8 @@ namespace DataAccessLayer.Impl
         {
             try
             {
-                //SingleResponse<APIUser> _user = await GetByUsername(user);
 
-                return await CosmosDb.UpsertItem(user, "APIUsers");
+                return await _CosmosService.UpsertItem(user, "APIUsers");
             }
             catch (Exception ex)
             {

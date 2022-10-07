@@ -17,9 +17,11 @@ namespace GifterWebApplication.Controllers
         }
 
         [HttpGet("/ProductsByGenre")]
+        [ProducesResponseType(200, Type = typeof(DataResponse<Product>))]
         [Authorize]
         public async Task<IActionResult> GetGifts(string genre)
         {
+
             DataResponse<Product> res = await _ProductService.GetByGenre(genre.ToLower());
 
             if (res.ItemList == null)
@@ -31,97 +33,68 @@ namespace GifterWebApplication.Controllers
         }
 
         [HttpGet("/AllProducts")]
+        [ProducesResponseType(200, Type = typeof(DataResponse<Product>))]
         [Authorize]
         public async Task<IActionResult> GetAllProducts()
         {
+            DataResponse<Product> res = await _ProductService.GetAll();
 
-            try
+            if (!res.HasSuccess)
             {
-                DataResponse<Product> res = await _ProductService.GetAll();
-
-                if (!res.HasSuccess)
-                {
-                    return NotFound(res.Exception.Message);
-                }
-
-                return Ok(res.ItemList);
+                return NotFound(res.Exception.Message);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            return Ok(res.ItemList);
+
+
         }
 
         [HttpPost("/Insert")]
-        [ProducesResponseType(404)]
-        [Authorize]
+        [ProducesResponseType(201, Type = typeof(Response))]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> InsertProduct(Product product)
         {
-            try
-            {
-                
-                Response res = await _ProductService.Insert(product);
 
-                if (!res.HasSuccess)
-                {
-                    return NotFound(res.Exception.Message);
-                }
+            Response res = await _ProductService.Insert(product);
 
-                return Ok("Cadastrado com sucesso.");
-            }
-            catch (Exception ex)
+            if (!res.HasSuccess)
             {
-                return BadRequest(ex.Message);
+                return NotFound(res.Exception.Message);
             }
+
+            return Created("Cadastrado com sucesso.", res);
+
         }
 
         [HttpPut("/Upsert")]
-        [ProducesResponseType(404)]
-        [Authorize]
+        [ProducesResponseType(201, Type = typeof(Response))]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> UpdateProduct(Product product)
         {
-            try
+            Response res = await _ProductService.Upsert(product);
+            if (!res.HasSuccess)
             {
-
-               
-                Response res = await _ProductService.Upsert(product);
-
-
-                if (!res.HasSuccess)
-                {
-                    return NotFound(res.Exception.Message);
-                }
-
-                return Ok("Atualizado com sucesso.");
+                return NotFound(res.Exception.Message);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            return Created("Atualizado com sucesso.", res);
+
         }
 
         [HttpDelete("/Delete")]
-        [ProducesResponseType(404)]
-        [Authorize]
+        [ProducesResponseType(200, Type = typeof(Response))]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> DeleteProduct(Product product)
         {
-            try
+            Response res = await _ProductService.Delete(product);
+
+            if (!res.HasSuccess)
             {
-               
-                Response res = await _ProductService.Delete(product);
-
-
-                if (!res.HasSuccess)
-                {
-                    return NotFound(res.Exception.Message);
-                }
-
-                return Ok("Deletado com sucesso.");
+                return NotFound(res.Exception.Message);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            return Ok("Deletado com sucesso.");
+
         }
     }
 }

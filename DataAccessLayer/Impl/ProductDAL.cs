@@ -7,35 +7,41 @@ namespace DataAccessLayer.Impl
 {
     public class ProductDAL : IProductDAL
     {
+        public readonly ICosmosDB _CosmosService;
+
+        public ProductDAL(ICosmosDB cosmosService)
+        {
+            _CosmosService = cosmosService;
+        }
 
         public async Task<DataResponse<Product>> GetAll()
         {
-            return await CosmosDb.GetItemList<Product>("SELECT * FROM c", "Products");
+            return await _CosmosService.GetItemList<Product>("SELECT * FROM c", "Products");
         }
 
         public async Task<DataResponse<Product>> GetByAssociatedPartner(string AssociatedPartner)
         {
             string query = $"SELECT * FROM c WHERE c.AssociatedPartner = '{AssociatedPartner}'";
-            return await CosmosDb.GetItemList<Product>(query, "Products");
+            return await _CosmosService.GetItemList<Product>(query, "Products");
         }
 
         public async Task<DataResponse<Product>> GetByGenre(string genre)
         {
             string query = $"SELECT * FROM c WHERE c.Genre = '{genre}'";
-            return await CosmosDb.GetItemList<Product>(query, "Products");
+            return await _CosmosService.GetItemList<Product>(query, "Products");
         }
 
         public async Task<SingleResponse<Product>> GetById(string id)
         {
             string query = $"SELECT * FROM c WHERE c.id = '{id}'";
-            return await CosmosDb.GetSingleItem<Product>(query, "Products");
+            return await _CosmosService.GetSingleItem<Product>(query, "Products");
         }
 
         public async Task<Response> Insert(Product product)
         {
             try
             {
-                return await CosmosDb.InsertItem<Product>(product, "Products");
+                return await _CosmosService.InsertItem<Product>(product, "Products");
             }
             catch (Exception ex)
             {
@@ -49,7 +55,7 @@ namespace DataAccessLayer.Impl
         {
             try
             {
-                return await CosmosDb.UpsertItem<Product>(updatedProduct, "Products");
+                return await _CosmosService.UpsertItem<Product>(updatedProduct, "Products");
             }
             catch (Exception ex)
             {
@@ -60,7 +66,7 @@ namespace DataAccessLayer.Impl
         {
             try
             {
-                return await CosmosDb.DeleteItem(product, "Products");
+                return await _CosmosService.DeleteItem(product, "Products");
             }
             catch (Exception ex)
             {

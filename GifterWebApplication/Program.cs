@@ -1,5 +1,6 @@
 using BusinessLogicalLayer.Impl;
 using BusinessLogicalLayer.Interfaces;
+using DataAccessLayer;
 using DataAccessLayer.Impl;
 using DataAccessLayer.Interfaces;
 using JwtAuthentication.Server.Services;
@@ -22,6 +23,9 @@ builder.Services.AddTransient<IWebScrapperBLL, WebScrapperBLL>();
 builder.Services.AddTransient<IWebScrapperDAL, WebScrapperDAL>();
 
 builder.Services.AddTransient<IRecommendationModel, RecommendationModel>();
+
+builder.Services.AddTransient<ICosmosDB, CosmosDb>();
+
 
 builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
