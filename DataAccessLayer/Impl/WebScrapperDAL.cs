@@ -37,8 +37,8 @@ namespace DataAccessLayer.Impl
                         options.AddArgument("--headless");
                     }
                     options.AddArgument("--private");
-                    options.BinaryLocation = @"../Shared\Assets\chrome-win.rar\chrome.exe";
-                    driver = new ChromeDriver(@"../Shared\Assets", options);
+                    options.BinaryLocation = @"../Shared\Assets\chrome-win\chrome.exe";
+                    driver = new ChromeDriver(@"../Shared\Assets\chrome-win", options);
                 }
                 else
                 {
