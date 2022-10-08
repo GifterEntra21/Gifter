@@ -16,25 +16,60 @@ namespace DataAccessLayer.Impl
 
         public async Task<DataResponse<Product>> GetAll()
         {
-            return await _CosmosService.GetItemList<Product>("SELECT * FROM c", "Products");
+            try
+            {
+                return await _CosmosService.GetItemList<Product>("SELECT * FROM c", "Products");
+
+            }
+            catch (Exception ex)
+            {
+
+                return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(ex);
+            }
         }
 
         public async Task<DataResponse<Product>> GetByAssociatedPartner(string AssociatedPartner)
         {
-            string query = $"SELECT * FROM c WHERE c.AssociatedPartner = '{AssociatedPartner}'";
-            return await _CosmosService.GetItemList<Product>(query, "Products");
+            try
+            {
+                string query = $"SELECT * FROM c WHERE c.AssociatedPartner = '{AssociatedPartner}'";
+                return await _CosmosService.GetItemList<Product>(query, "Products");
+            }
+            catch (Exception ex)
+            {
+
+                return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(ex);
+            }
+
         }
 
         public async Task<DataResponse<Product>> GetByGenre(string genre)
         {
-            string query = $"SELECT * FROM c WHERE c.Genre = '{genre}'";
-            return await _CosmosService.GetItemList<Product>(query, "Products");
+            try
+            {
+                string query = $"SELECT * FROM c WHERE c.Genre = '{genre}'";
+                return await _CosmosService.GetItemList<Product>(query, "Products");
+            }
+            catch (Exception ex)
+            {
+                return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(ex);
+            }
+            
         }
 
         public async Task<SingleResponse<Product>> GetById(string id)
         {
-            string query = $"SELECT * FROM c WHERE c.id = '{id}'";
-            return await _CosmosService.GetSingleItem<Product>(query, "Products");
+            try
+            {
+                string query = $"SELECT * FROM c WHERE c.id = '{id}'";
+                return await _CosmosService.GetSingleItem<Product>(query, "Products");
+            }
+            catch (Exception ex)
+            {
+
+                return ResponseFactory.CreateInstance().CreateFailedSingleResponse<Product>(ex);
+            }
+
         }
 
         public async Task<Response> Insert(Product product)

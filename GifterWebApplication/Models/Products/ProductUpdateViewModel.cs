@@ -1,7 +1,10 @@
-﻿namespace GifterWebApplication.Models.Products
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GifterWebApplication.Models.Products
 {
     public class ProductUpdateViewModel
     {
+        [Required]
         public string id { get; set; }
         public string Name { get; set; }
         public string Genre { get; set; }

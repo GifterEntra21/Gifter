@@ -1,11 +1,12 @@
-﻿using System.Security.Claims;
+﻿using Shared.Responses;
+using System.Security.Claims;
 
 namespace JwtAuthentication.Server.Services
 {
     public interface ITokenService
     {
-        string GenerateAccessToken(IEnumerable<Claim> claims);
+        SingleResponse<string> GenerateAccessToken(IEnumerable<Claim> claims);
         string GenerateRefreshToken();
-        ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
+        SingleResponse<ClaimsPrincipal> GetPrincipalFromExpiredToken(string token);
     }
 }

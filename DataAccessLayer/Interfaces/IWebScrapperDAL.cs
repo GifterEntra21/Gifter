@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Shared.Responses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace DataAccessLayer.Interfaces
 {
     public interface IWebScrapperDAL
     {
-        public Task<List<string>> ScrapeInstagramWithDefaultAccount(bool headless, string profile);
+        public Task<DataResponse<string>> ScrapeInstagramWithDefaultAccount(bool headless, string profile);
     }
 }

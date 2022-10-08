@@ -5,13 +5,14 @@ using Entities;
 using BusinessLogicalLayer.Impl;
 using BusinessLogicalLayer.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using GifterWebApplication.Models.RecommendationRequest;
 
 namespace GiterWebAPI.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
 
-    public class RecommendationController : Controller
+    public class RecommendationController : ControllerBase
     {
 
         public readonly IWebScrapperBLL _WebScrapperService;
@@ -22,16 +23,17 @@ namespace GiterWebAPI.Controllers
         }
 
 
-
-        [HttpGet("/RecommendedGifts")]
+        //get nao pode ter body
+        [HttpGet]
+        [Route("RecommendGifts")]
         [Authorize(Roles = "Manager")]
-        [ProducesResponseType(200, Type = typeof(DataResponse<Product>))]
+        [ProducesResponseType(200, Type = typeof(List<Product>))]
         // Scrape the profile for images and recommend gifts based on that
-        public async Task<IActionResult> GetGifts(string profile)
+        public async Task<IActionResult> GetGifts([FromQuery] string request) //Por query funciona no swagger, mas nao no postman
         {
-            string _profile = profile.Replace("@", "");
-            List<TagWithCount> tags = await _WebScrapperService.Scrape(_profile);
-            DataResponse<Product> giftsResponse = await _WebScrapperService.GetGifts(tags, profile);
+            string _profile = request.Replace("@", "");
+            DataResponse<TagWithCount> tags = await _WebScrapperService.Scrape(_profile);
+            DataResponse<Product> giftsResponse = await _WebScrapperService.GetGifts(tags.ItemList, _profile);
             List<Product> gifts = giftsResponse.ItemList;
 
             if (gifts == null)
@@ -43,18 +45,19 @@ namespace GiterWebAPI.Controllers
         }
 
 
-        [HttpGet("/MostCommonTag")]
+        [HttpGet]
+        [Route("GetMostCommonTag")]
         [Authorize(Roles = "Manager")]
-        [ProducesResponseType(200, Type = typeof(DataResponse<TagWithCount>))]
-        public async Task<IActionResult> GetMostCommonTag(string user)
+        [ProducesResponseType(200, Type = typeof(List<TagWithCount>))]
+        public async Task<IActionResult> GetMostCommonTag([FromQuery] DefaultRequest request) 
         {
             // response é a lista que contém todas as tags encontradas nas imagens do perfil, sendo que
             // elas foram transformadas em uma classe que possui como propriedades o nome e a quantidade de cada tag
 
-            List<TagWithCount> response = await _WebScrapperService.Scrape(user);
-            TagWithCount tag = response.MaxBy(t => t.Count);
+            DataResponse<TagWithCount> response = await _WebScrapperService.Scrape(request.Request);
+            TagWithCount tag = response.ItemList.MaxBy(t => t.Count);
 
-            if (response == null)
+            if (!response.HasSuccess)
             {
                 return NotFound();
             }
@@ -62,21 +65,20 @@ namespace GiterWebAPI.Controllers
             return Ok(tag.Name);
         }
 
-        [HttpGet("/AllTags")]
+        [HttpGet]
+        [Route("GetAllTags")]
         [Authorize(Roles = "Manager")]
-        [ProducesResponseType(200, Type = typeof(DataResponse<TagWithCount>))]
-        public async Task<IActionResult> GetAllTags(string user)
+        [ProducesResponseType(200, Type = typeof(List<TagWithCount>))]
+        public async Task<IActionResult> GetAllTags([FromQuery]DefaultRequest request)
         {
 
-            List<TagWithCount> response = await _WebScrapperService.Scrape(user);
+            DataResponse<TagWithCount> response = await _WebScrapperService.Scrape(request.Request);
 
-            if (response == null)
+            if (!response.HasSuccess)
             {
                 return NotFound();
             }
-
             return Ok(response);
-
 
         }
     }

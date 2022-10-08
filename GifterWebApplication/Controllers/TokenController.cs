@@ -1,21 +1,18 @@
-﻿
-using BusinessLogicalLayer.Interfaces;
+﻿using BusinessLogicalLayer.Interfaces;
 using Entities;
 using GifterWebApplication.Models.Authentication;
 using JwtAuthentication.Server.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Responses;
 
 namespace GifterWebApplication.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class TokenController : ControllerBase
     {
         private readonly IUserBLL _userService;
-
         private readonly ITokenService _tokenService;
 
         public TokenController(IUserBLL userService, ITokenService tokenService)
@@ -24,9 +21,10 @@ namespace GifterWebApplication.Controllers
             _tokenService = tokenService;
         }
 
-        [HttpPost("/refresh")]
+        [HttpPost]
+        [Route("refresh")]
         [ProducesResponseType(200, Type = typeof(AuthenticationResponse))]
-        public IActionResult Refresh(TokenApiModel tokenApiModel)
+        public IActionResult Refresh([FromBody] TokenApiModel tokenApiModel)
         {
             if (tokenApiModel is null)
             {
@@ -36,7 +34,7 @@ namespace GifterWebApplication.Controllers
             string accessToken = tokenApiModel.AccessToken;
             string refreshToken = tokenApiModel.RefreshToken;
 
-            var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken);
+            var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken).Item;
             var _username = principal.Identity.Name; //this is mapped to the Name claim by default
 
             var user = _userService.GetByUsername(new APIUser() { Username = _username });
@@ -46,7 +44,7 @@ namespace GifterWebApplication.Controllers
                 return BadRequest("Invalid client request");
             }
 
-            var newAccessToken = _tokenService.GenerateAccessToken(principal.Claims);
+            var newAccessToken = _tokenService.GenerateAccessToken(principal.Claims).Item;
             var newRefreshToken = _tokenService.GenerateRefreshToken();
 
             user.Result.Item.RefreshToken = newRefreshToken;
@@ -60,7 +58,8 @@ namespace GifterWebApplication.Controllers
             });
         }
 
-        [HttpPost("/revoke")]
+        [HttpPost]
+        [Route("revoke")]
         [Authorize]
         [ProducesResponseType(204)]
         public async Task<IActionResult> Revoke()
@@ -76,7 +75,11 @@ namespace GifterWebApplication.Controllers
             user.Item.RefreshToken = null;
             user.Item.RefreshTokenExpiryTime = null;
 
-            await _userService.Update(user.Item);
+            Response resp = await _userService.Update(user.Item);
+            if (!resp.HasSuccess)
+            {
+                return BadRequest();
+            }
             return NoContent();
         }
     }

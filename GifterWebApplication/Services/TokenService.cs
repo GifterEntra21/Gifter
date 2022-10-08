@@ -1,4 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using Shared.Responses;
+using Shared.Settings;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -8,26 +10,46 @@ namespace JwtAuthentication.Server.Services
 {
     public class TokenService : ITokenService
     {
-        public string GenerateAccessToken(IEnumerable<Claim> claims)
+        private DateTime ExpiryTime { get; set; }
+
+        public SingleResponse<string> GenerateAccessToken(IEnumerable<Claim> claims)
         {
-            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"));
-            var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+            try
+            {
+                SymmetricSecurityKey secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"));
+                SigningCredentials signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
-            var tokeOptions = new JwtSecurityToken(
-                issuer: "https://localhost:7008",
-                audience: "https://localhost:5001",
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(300),
-                signingCredentials: signinCredentials
-            );
+                if (AppSettings.IsDevelopingMode)
+                {
+                    ExpiryTime = DateTime.Now.AddMinutes(300);
+                }
+                else
+                {
+                    ExpiryTime = DateTime.Now.AddMinutes(1);
+                }
 
-            var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
-            return tokenString;
+                JwtSecurityToken tokeOptions = new JwtSecurityToken(
+                    issuer: "https://localhost:7008",
+                    audience: "https://localhost:5001",
+                    claims: claims,
+                    expires: ExpiryTime,
+                    signingCredentials: signinCredentials
+                );
+
+                string tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
+                return ResponseFactory.CreateInstance().CreateSuccessSingleResponse(tokenString);
+            }
+            catch (Exception ex)
+            {
+
+                return ResponseFactory.CreateInstance().CreateFailedSingleResponse<string>(ex);
+            }
+            
         }
 
         public string GenerateRefreshToken()
         {
-            var randomNumber = new byte[32];
+            byte[] randomNumber = new byte[32];
             using (var rng = RandomNumberGenerator.Create())
             {
                 rng.GetBytes(randomNumber);
@@ -35,25 +57,40 @@ namespace JwtAuthentication.Server.Services
             }
         }
 
-        public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+        public SingleResponse<ClaimsPrincipal> GetPrincipalFromExpiredToken(string token)
         {
-            var tokenValidationParameters = new TokenValidationParameters
+            try
             {
-                ValidateAudience = false, //you might want to validate the audience and issuer depending on your use case
-                ValidateIssuer = false,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345")),
-                ValidateLifetime = false //here we are saying that we don't care about the token's expiration date
-            };
+                TokenValidationParameters tokenValidationParameters = new TokenValidationParameters
+                {
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            SecurityToken securityToken;
-            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
-            var jwtSecurityToken = securityToken as JwtSecurityToken;
-            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-                throw new SecurityTokenException("Invalid token");
+                    ValidateAudience = false, //Valida o "consumidor", ou seja, quem faz as requisições
+                    ValidateIssuer = true, //Valida o "emissor", ou seja, quem recebe as requisições
+                    ValidateIssuerSigningKey = true,//Valida a assinatura do "emissor", ou seja, a criptografia que gerou o acess Token
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345")),
+                    ValidateLifetime = false //nesse caso não importa se o token está ou nao expira, pois para nos so importa os dados que ele contem
+                };
 
-            return principal;
+                JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+                SecurityToken securityToken;
+
+                ClaimsPrincipal principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
+
+                JwtSecurityToken jwtSecurityToken = securityToken as JwtSecurityToken;
+
+                if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    throw new SecurityTokenException("Invalid token");
+                }
+
+                return ResponseFactory.CreateInstance().CreateSuccessSingleResponse(principal);
+            }
+            catch (Exception ex)
+            {
+
+                return ResponseFactory.CreateInstance().CreateFailedSingleResponse<ClaimsPrincipal>(ex);
+            }
+            
         }
     }
 }

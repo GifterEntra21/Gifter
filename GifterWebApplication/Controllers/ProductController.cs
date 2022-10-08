@@ -1,30 +1,39 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Shared.Responses;
-using Entities;
+﻿using AutoMapper;
 using BusinessLogicalLayer.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+using Entities;
 using GifterWebApplication.Models.Products;
-using AutoMapper;
+using GifterWebApplication.Models.RecommendationRequest;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Shared.Responses;
 
 namespace GifterWebApplication.Controllers
 {
-    public class ProductController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ProductController : ControllerBase
     {
-
-        public readonly IProductBLL _ProductService;
+        private readonly IProductBLL _ProductService;
         private readonly IMapper _mapper;
-        public ProductController(IProductBLL productService)
+
+        public ProductController(IProductBLL productService, IMapper mapper)
         {
             _ProductService = productService;
+            _mapper = mapper;
         }
 
-        [HttpGet("/ProductsByGenre")]
-        [ProducesResponseType(200, Type = typeof(DataResponse<Product>))]
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(Product))]
         [Authorize]
-        public async Task<IActionResult> GetGifts(string genre)
+        [Route("ProductsByGenre")]
+        
+        public async Task<IActionResult> GetGifts([FromQuery]DefaultRequest genre)
         {
-
-            DataResponse<Product> res = await _ProductService.GetByGenre(genre.ToLower());
+            if (genre == null)
+            {
+                return BadRequest();
+            }
+            DataResponse<Product> res = await _ProductService.GetByGenre(genre.Request.ToLower());
 
             List<ProductSelectViewModel> products = _mapper.Map<List<ProductSelectViewModel>>(res.ItemList);
 
@@ -36,30 +45,35 @@ namespace GifterWebApplication.Controllers
             return Ok(products);
         }
 
-        [HttpGet("/AllProducts")]
-        [ProducesResponseType(200, Type = typeof(DataResponse<Product>))]
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(Product))]
         [Authorize]
+        [Route("AllProducts")]
+
         public async Task<IActionResult> GetAllProducts()
         {
             DataResponse<Product> res = await _ProductService.GetAll();
+            List<ProductSelectViewModel> products = _mapper.Map<List<ProductSelectViewModel>>(res.ItemList);
 
             if (!res.HasSuccess)
             {
                 return NotFound(res.Exception.Message);
             }
 
-            return Ok(res.ItemList);
+            return Ok(products);
+            
 
 
         }
 
-        [HttpPost("/Insert")]
-        [ProducesResponseType(201, Type = typeof(Response))]
+        [HttpPost]
+        [Route("Insert")]
+        [ProducesResponseType(201)]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> InsertProduct(Product product)
+        public async Task<IActionResult> InsertProduct([FromBody]ProductInsertViewModel product)
         {
-
-            Response res = await _ProductService.Insert(product);
+            Product _product = _mapper.Map<Product>(product);
+            Response res = await _ProductService.Insert(_product);
 
             if (!res.HasSuccess)
             {
@@ -70,27 +84,31 @@ namespace GifterWebApplication.Controllers
 
         }
 
-        [HttpPut("/Upsert")]
-        [ProducesResponseType(201, Type = typeof(Response))]
+        [HttpPut]
+        [Route("Upsert")]
+        [ProducesResponseType(201)]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> UpdateProduct(Product product)
+        public async Task<IActionResult> UpdateProduct([FromBody] ProductUpdateViewModel product)
         {
-            Response res = await _ProductService.Upsert(product);
+            Product _product = _mapper.Map<Product>(product);
+            Response res = await _ProductService.Upsert(_product);
             if (!res.HasSuccess)
             {
                 return NotFound(res.Exception.Message);
             }
 
-            return Created("Atualizado com sucesso.", res);
+            return Created("Atualizado com sucesso.", res.HasSuccess);
 
         }
 
-        [HttpDelete("/Delete")]
-        [ProducesResponseType(200, Type = typeof(Response))]
+        [HttpDelete]
+        [Route("Delete")]
+        [ProducesResponseType(200)]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> DeleteProduct(Product product)
+        public async Task<IActionResult> DeleteProduct([FromBody] ProductDeleteViewModel product)
         {
-            Response res = await _ProductService.Delete(product);
+            Product _product = _mapper.Map<Product>(product);
+            Response res = await _ProductService.Delete(_product);
 
             if (!res.HasSuccess)
             {

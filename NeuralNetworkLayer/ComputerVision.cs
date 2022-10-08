@@ -11,6 +11,7 @@ using System.Linq;
 using Microsoft.ML;
 using Microsoft.ML.Trainers;
 using System.Text;
+using Shared.Responses;
 
 namespace NeuralNetworkLayer
 {
@@ -23,43 +24,53 @@ namespace NeuralNetworkLayer
         // URL para a análise de uma única imagem
         //private const string ANALYZE_URL_IMAGE = "https://cdn-1.motorsport.com/images/amp/0k783Oq0/s800/lewis-hamilton-mercedes-w13-cr.jpg";
 
-        public async Task<List<ImageTag>> CheckTags(List<string> urls)
+        public async Task<DataResponse<ImageTag>> CheckTags(List<string> urls)
         {
             // Create a client
-            ComputerVisionClient client = Authenticate(endpoint, subscriptionKey);
-
-            /*
-             * ANALISAR SOMENTE UMA IMAGEM
-             */
-            //AnalyzeImageUrl(client, ANALYZE_URL_IMAGE).Wait();
-
-            /*
-             * ANALISAR VÁRIAS IMAGENS
-             */
-
-            List<ImageTag> tags = new List<ImageTag>();
-            List<ImageAnalysis> results = new List<ImageAnalysis>();
-            foreach (string url in urls)
+            try
             {
-                ImageAnalysis img = await AnalyzeImageUrl(client, url);
+                ComputerVisionClient client = Authenticate(endpoint, subscriptionKey);
 
-                results.Add(img); // nesse caso, analisa as imagens dentro da lista de URLs
-                foreach (var image in results)
+                /*
+                 * ANALISAR SOMENTE UMA IMAGEM
+                 */
+                //AnalyzeImageUrl(client, ANALYZE_URL_IMAGE).Wait();
+
+                /*
+                 * ANALISAR VÁRIAS IMAGENS
+                 */
+
+                List<ImageTag> tags = new List<ImageTag>();
+                List<ImageAnalysis> results = new List<ImageAnalysis>();
+                foreach (string url in urls)
                 {
-                    foreach (var tag in image.Tags)
+                    ImageAnalysis img = await AnalyzeImageUrl(client, url);
+
+                    results.Add(img); // nesse caso, analisa as imagens dentro da lista de URLs
+                    foreach (var image in results)
                     {
-                        tags.Add(tag);
+                        foreach (var tag in image.Tags)
+                        {
+                            tags.Add(tag);
+                        }
                     }
                 }
+
+                return ResponseFactory.CreateInstance().CreateSuccessDataResponse<ImageTag>(tags);
             }
 
-            return tags;
-        }
+            catch (Exception ex)
+            {
 
+                return ResponseFactory.CreateInstance().CreateFailedDataResponse<ImageTag>(ex);
+            }
+
+            
+        }
         /*
-         * AUTHENTICATE
-         * Creates a Computer Vision client used by each example.
-         */
+             * AUTHENTICATE
+             * Creates a Computer Vision client used by each example.
+             */
         public static ComputerVisionClient Authenticate(string endpoint, string key)
         {
             ComputerVisionClient client = new ComputerVisionClient(new ApiKeyServiceClientCredentials(key))

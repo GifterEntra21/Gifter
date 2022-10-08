@@ -1,5 +1,4 @@
-﻿
-using AutoMapper;
+﻿using AutoMapper;
 using BusinessLogicalLayer.Interfaces;
 using Entities;
 using GifterWebApplication.Models.Authentication;
@@ -10,8 +9,8 @@ using System.Security.Claims;
 
 namespace GifterWebApplication.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly IUserBLL _userService;     
@@ -27,9 +26,10 @@ namespace GifterWebApplication.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("/Login")]
-        [ProducesResponseType(200, Type = typeof(AuthenticationResponse))]
-        public async Task<IActionResult> Login( AuthenticationRequest loginModel)
+        [HttpPost]
+        [Route("Login")]
+        //[ProducesResponseType(200, Type = typeof(AuthenticationResponse))]
+        public async Task<IActionResult> Login([FromBody]AuthenticationRequest loginModel)
         {
             if (loginModel is null)
             {
@@ -50,7 +50,7 @@ namespace GifterWebApplication.Controllers
                 new Claim(ClaimTypes.Name, user.Item.Username),
                 new Claim(ClaimTypes.Role, user.Item.Role.ToString())
             };
-            var accessToken = _tokenService.GenerateAccessToken(claims);
+            var accessToken = _tokenService.GenerateAccessToken(claims).Item;
             var refreshToken = _tokenService.GenerateRefreshToken();
 
             user.Item.RefreshToken = refreshToken;

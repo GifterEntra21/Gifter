@@ -6,11 +6,11 @@ using Shared.Responses;
 
 namespace NeuralNetworkLayer.Impl
 {
-    public class RecommendationModel:IRecommendationModel
+    public class RecommendationService:IRecommendationModel
     {
         public readonly IProductDAL _ProductService;
 
-        public RecommendationModel(IProductDAL productService)
+        public RecommendationService(IProductDAL productService)
         {
             _ProductService = productService;
         }
