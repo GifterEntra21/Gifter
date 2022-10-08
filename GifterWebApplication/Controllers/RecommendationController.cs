@@ -49,12 +49,12 @@ namespace GiterWebAPI.Controllers
         [Route("GetMostCommonTag")]
         [Authorize(Roles = "Manager")]
         [ProducesResponseType(200, Type = typeof(List<TagWithCount>))]
-        public async Task<IActionResult> GetMostCommonTag([FromQuery] DefaultRequest request) 
+        public async Task<IActionResult> GetMostCommonTag([FromQuery] string request) 
         {
             // response é a lista que contém todas as tags encontradas nas imagens do perfil, sendo que
             // elas foram transformadas em uma classe que possui como propriedades o nome e a quantidade de cada tag
 
-            DataResponse<TagWithCount> response = await _WebScrapperService.Scrape(request.Request);
+            DataResponse<TagWithCount> response = await _WebScrapperService.Scrape(request);
             TagWithCount tag = response.ItemList.MaxBy(t => t.Count);
 
             if (!response.HasSuccess)
@@ -69,10 +69,10 @@ namespace GiterWebAPI.Controllers
         [Route("GetAllTags")]
         [Authorize(Roles = "Manager")]
         [ProducesResponseType(200, Type = typeof(List<TagWithCount>))]
-        public async Task<IActionResult> GetAllTags([FromQuery]DefaultRequest request)
+        public async Task<IActionResult> GetAllTags([FromQuery] string request)
         {
 
-            DataResponse<TagWithCount> response = await _WebScrapperService.Scrape(request.Request);
+            DataResponse<TagWithCount> response = await _WebScrapperService.Scrape(request);
 
             if (!response.HasSuccess)
             {
