@@ -16,7 +16,8 @@ namespace Entities
              "clothing", "font", "smile", "facial hair", "wearing", "white", "electric blue", "bed sheet", "bedroom",
              "room", "fan", "screenshot", "standing", "ground", "sleeve", "people", "phone", "holding", "cellphone",
              "hood", "sitting", "wrist", "sky", "water", "woman", "women", "men", "outdoor", "indoor", "girl", "boy",
-             "kid", "child", "hair"};
+             "kid", "child", "hair", "mobile phone", "floor", "ceiling", "human beard", "shirt", "bathroom", "elbow",
+             "armrest"};
         }
         public static List<string> BanishedTagsList { get; set; }
     }

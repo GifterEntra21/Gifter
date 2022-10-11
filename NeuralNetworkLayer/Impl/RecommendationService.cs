@@ -19,51 +19,24 @@ namespace NeuralNetworkLayer.Impl
         {
             InstagramProfile profile = new(userName);
 
-            int sportBias = 0;
-            int animeBias = 0;
-            int exotericBias = 0;
+            Dictionary<string, int> genresBiases = new Dictionary<string, int>();
 
-            for (int i = 0; i < tags.Count; i++)
+            foreach (GenreWithTags genre in TagGenres.GenresList)
             {
-                if (TagGenres.SportTags.Contains(tags[i].Name))
+                int genreTagCounts = 0;
+                for (int i = 0; i < tags.Count; i++)
                 {
-                    sportBias += tags[i].Count;
+                    if (genre.Tags.Contains(tags[i].Name))
+                    {
+                        genreTagCounts += tags[i].Count;
+                    }
                 }
-                if (TagGenres.AnimeTags.Contains(tags[i].Name))
-                {
-                    animeBias += tags[i].Count;
-                }
-                if (TagGenres.ExotericTags.Contains(tags[i].Name))
-                {
-                    exotericBias += tags[i].Count;
-                }
+                genresBiases.Add(genre.GenreName, genreTagCounts);
             }
 
+            genresBiases = genresBiases.OrderByDescending(g => g.Value).ToDictionary(g => g.Key, g => g.Value);
 
-            double totalWeight = sportBias + animeBias + exotericBias;
-            double sportPercent = ((sportBias) * 100) / totalWeight;
-            double animePercent = ((animeBias) * 100) / totalWeight;
-            double exotericPercent = ((exotericBias) * 100) / totalWeight;
-
-
-            if (sportPercent > animePercent && sportPercent > exotericPercent)
-            {
-                profile.Genre = "sport";
-            }
-            else if (animePercent > sportPercent && animePercent > exotericPercent)
-            {
-                profile.Genre = "anime";
-            }
-            else if (exotericPercent > animePercent && exotericPercent > sportPercent)
-            {
-                profile.Genre = "exoteric";
-            }
-            else
-            {
-                profile.Genre = "generic";
-            }
-
-
+            profile.Genre = genresBiases.First().Key;
             return profile;
         }
 
