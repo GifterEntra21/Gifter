@@ -44,9 +44,7 @@ namespace NeuralNetworkLayer.Impl
         {
             InstagramProfile profile = CategorizeProfileByTags(tags, username);
 
-
             return await _ProductService.GetByGenre(profile.Genre);
-
         }
 
     }
