@@ -1,12 +1,13 @@
 ﻿using DataAccessLayer.Interfaces;
 using Entities;
+using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using NeuralNetworkLayer.Interfaces;
 using Shared;
 using Shared.Responses;
 
 namespace NeuralNetworkLayer.Impl
 {
-    public class RecommendationService:IRecommendationModel
+    public class RecommendationService : IRecommendationModel
     {
         public readonly IProductDAL _ProductService;
 
@@ -19,24 +20,31 @@ namespace NeuralNetworkLayer.Impl
         {
             InstagramProfile profile = new(userName);
 
-            Dictionary<string, int> genresBiases = new Dictionary<string, int>();
+            Dictionary<string, int> genresTagsCounts = new Dictionary<string, int>();
+            bool isGeneric = true;
 
-            foreach (GenreWithTags genre in TagGenres.GenresList)
+            foreach (TagWithCount tag in tags)
             {
-                int genreTagCounts = 0;
-                for (int i = 0; i < tags.Count; i++)
+                foreach (GenreWithTags genre in TagGenres.GenresList)
                 {
-                    if (genre.Tags.Contains(tags[i].Name))
+                    if (genre.Tags.Contains(tag.Name))
                     {
-                        genreTagCounts += tags[i].Count;
+                        isGeneric = false;
+                        int totalCount = genresTagsCounts.GetValueOrDefault(genre.GenreName) + tag.Count;
+                        genresTagsCounts.Add(genre.GenreName, totalCount);
                     }
                 }
-                genresBiases.Add(genre.GenreName, genreTagCounts);
             }
 
-            genresBiases = genresBiases.OrderByDescending(g => g.Value).ToDictionary(g => g.Key, g => g.Value);
+            if (isGeneric)
+            {
+                profile.Genre = "generic";
+                return profile;
+            }
 
-            profile.Genre = genresBiases.First().Key;
+            genresTagsCounts = genresTagsCounts.OrderByDescending(g => g.Value).ToDictionary(g => g.Key, g => g.Value);
+
+            profile.Genre = genresTagsCounts.First().Key;
             return profile;
         }
 

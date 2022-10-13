@@ -54,7 +54,6 @@ namespace DataAccessLayer.Impl
             {
                 return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(ex);
             }
-            
         }
 
         public async Task<SingleResponse<Product>> GetById(string id)

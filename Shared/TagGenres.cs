@@ -5,7 +5,7 @@
 
         public static GenreWithTags SportTags = new GenreWithTags
         {
-            GenreName = "sports",
+            GenreName = "sport",
             Tags = {"soccer", "football", "gym", "player", "sports uniform", "sportswear",
             "field", "athletic game", "sport venue", "ball game", "stadium", "soccer player", "team sport", "championship", "baseball",
             "tournament", "artificial turf", "soccer-specific stadium", "football player", "ball", "sports equipment"}
@@ -53,6 +53,11 @@
             "car seat cover", "road", "sports sedan", "sedan", "coupe", "hatch", "sports coupe", "sports car", "automotive parking light",
             "parking lot", "garage", "automotive wheel system", "headlamp", "automobile repair shop", "engine", "motor", "automotive light bulb",
             "vehicle door", "windshield", "performance car", "supercar", "hypercar", "bmw", "city car", "motor vehicle", "mechanic", "automotive mechanic" }
+        };
+
+        public static GenreWithTags GenericTags = new GenreWithTags
+        {
+            GenreName = "generic"
         };
 
         public static List<GenreWithTags> GenresList { get { return new List<GenreWithTags> { SportTags, AnimeTags, ExotericTags, FashionTags,
