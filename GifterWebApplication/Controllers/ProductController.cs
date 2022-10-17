@@ -54,16 +54,11 @@ namespace GifterWebApplication.Controllers
         {
             DataResponse<Product> res = await _ProductService.GetAll();
             List<ProductSelectViewModel> products = _mapper.Map<List<ProductSelectViewModel>>(res.ItemList);
-
             if (!res.HasSuccess)
             {
                 return NotFound(res.Exception.Message);
             }
-
-            return Ok(products);
-            
-
-
+            return Ok(products);       
         }
 
         [HttpPost]
@@ -116,7 +111,16 @@ namespace GifterWebApplication.Controllers
             }
 
             return Ok("Deletado com sucesso.");
+        }
 
+        [HttpPost]
+        [Route("ClickPlus")]
+        [ProducesResponseType(200)]
+        [Authorize(Roles ="Manager")]
+        public async Task<IActionResult>  ClickPlus([FromBody] string productID)
+        {
+           var a = await _ProductService.ClicksPlus(productID);
+           return Ok(a);
         }
     }
 }

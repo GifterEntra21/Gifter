@@ -12,6 +12,7 @@ using NeuralNetworkLayer.Interfaces;
 using Shared.Settings;
 using System.Reflection;
 using System.Text;
+using Microsoft.Extensions.Caching.Distributed;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,7 +53,10 @@ builder.Services.AddAuthentication(opt => {
             ClockSkew = TimeSpan.Zero
         };
     });
-
+builder.Services.AddDistributedRedisCache(opt =>
+{
+    opt.Configuration = builder.Configuration.GetConnectionString("AzureRedisConnection");
+});
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("EnableCORS", builder =>

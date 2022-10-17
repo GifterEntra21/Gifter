@@ -17,5 +17,6 @@ namespace BusinessLogicalLayer.Interfaces
         Task<DataResponse<Product>> GetByGenre(string genre);
         Task<DataResponse<Product>> GetByAssociatedPartner(string AssociatedPartner);
         Task<SingleResponse<Product>> GetById(string id);
+        Task<Response> ClicksPlus(string productId);
     }
 }
