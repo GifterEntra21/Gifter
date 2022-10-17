@@ -14,12 +14,21 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      - uses: "finnp/create-file-action@master"
+        env:
+          FILE_NAME: .env
+          FILE_DATA: |
+            COSMOS_URI=${{ secrets.COSMOS_URI }}
+            COSMOS_PRIMARY_KEY=${{ secrets.COSMOS_PRIMARY_KEY }}
+            REDIS_CACHE_PRIMARY_KEY=${{ secrets.REDIS_CACHE_PRIMARY_KEY }}
+            REDIS_CACHE_CONNECTION_STRING=${{ secrets.REDIS_CACHE_CONNECTION_STRING }}
+
       - uses: actions/checkout@v2
 
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '6.0.x'
+          dotnet-version: "6.0.x"
           include-prerelease: true
 
       - name: Build with dotnet
@@ -38,7 +47,7 @@ jobs:
     runs-on: windows-latest
     needs: build
     environment:
-      name: 'Production'
+      name: "Production"
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
@@ -51,7 +60,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'gifterserver'
-          slot-name: 'Production'
+          app-name: "gifterserver"
+          slot-name: "Production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_8B29D58A3C3A4891815BC463E131E247 }}
           package: .
