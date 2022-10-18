@@ -23,13 +23,12 @@ namespace GiterWebAPI.Controllers
         }
 
 
-        //get nao pode ter body
         [HttpGet]
         [Route("RecommendGifts")]
         [Authorize(Roles = "Manager")]
         [ProducesResponseType(200, Type = typeof(List<Product>))]
         // Scrape the profile for images and recommend gifts based on that
-        public async Task<IActionResult> GetGifts([FromQuery] string request) //Por query funciona no swagger, mas nao no postman
+        public async Task<IActionResult> GetGifts([FromQuery] string request) 
         {
             string _profile = request.Replace("@", "");
             DataResponse<TagWithCount> tags = await _WebScrapperService.Scrape(_profile);
@@ -40,6 +39,8 @@ namespace GiterWebAPI.Controllers
             {
                 return NotFound();
             }
+
+            gifts.OrderBy(g => g.Clicks);
 
             return Ok(gifts);
         }

@@ -48,7 +48,11 @@ namespace DataAccessLayer.Impl
             try
             {
                 string query = $"SELECT * FROM c WHERE c.Genre = '{genre}'";
-                return await _CosmosService.GetItemList<Product>(query, "Products");
+                DataResponse<Product> productsData = await _CosmosService.GetItemList<Product>(query, "Products");
+                List<Product> productsOrderedByClicks = productsData.ItemList.OrderBy(p => p.Clicks).ToList();
+                
+                return ResponseFactory.CreateInstance().CreateSuccessDataResponse<Product>(productsOrderedByClicks);
+
             }
             catch (Exception ex)
             {
