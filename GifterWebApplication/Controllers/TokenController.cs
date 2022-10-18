@@ -26,36 +26,45 @@ namespace GifterWebApplication.Controllers
         [ProducesResponseType(200, Type = typeof(AuthenticationResponse))]
         public IActionResult Refresh([FromBody] TokenApiModel tokenApiModel)
         {
-            if (tokenApiModel is null)
+            try
             {
-                return BadRequest("Invalid client request");
+                if (tokenApiModel is null)
+                {
+                    return BadRequest("Invalid client request");
+                }
+
+                string accessToken = tokenApiModel.AccessToken;
+                string refreshToken = tokenApiModel.RefreshToken;
+
+                var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken).Item;
+                var _username = principal.Identity.Name; //this is mapped to the Name claim by default
+
+                var user = _userService.GetByUsername(new APIUser() { Username = _username });
+
+                if (user == null || user.Result.Item.RefreshToken != refreshToken || user.Result.Item.RefreshTokenExpiryTime <= DateTime.Now)
+                {
+                    return BadRequest("Invalid client request");
+                }
+
+                var newAccessToken = _tokenService.GenerateAccessToken(principal.Claims).Item;
+                var newRefreshToken = _tokenService.GenerateRefreshToken();
+
+                user.Result.Item.RefreshToken = newRefreshToken;
+
+                _userService.Update(user.Result.Item);
+
+                return Ok(new AuthenticationResponse()
+                {
+                    AccessToken = newAccessToken,
+                    RefreshToken = newRefreshToken
+                });
             }
-
-            string accessToken = tokenApiModel.AccessToken;
-            string refreshToken = tokenApiModel.RefreshToken;
-
-            var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken).Item;
-            var _username = principal.Identity.Name; //this is mapped to the Name claim by default
-
-            var user = _userService.GetByUsername(new APIUser() { Username = _username });
-
-            if (user == null || user.Result.Item.RefreshToken != refreshToken || user.Result.Item.RefreshTokenExpiryTime <= DateTime.Now)
+            catch (Exception ex)
             {
-                return BadRequest("Invalid client request");
+
+                return BadRequest();
             }
-
-            var newAccessToken = _tokenService.GenerateAccessToken(principal.Claims).Item;
-            var newRefreshToken = _tokenService.GenerateRefreshToken();
-
-            user.Result.Item.RefreshToken = newRefreshToken;
-
-            _userService.Update(user.Result.Item);
-
-            return Ok(new AuthenticationResponse()
-            {
-                AccessToken = newAccessToken,
-                RefreshToken = newRefreshToken
-            });
+            
         }
 
         [HttpPost]

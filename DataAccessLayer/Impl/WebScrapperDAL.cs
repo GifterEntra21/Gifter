@@ -92,7 +92,7 @@ namespace DataAccessLayer.Impl
 
 
                 //searches the user profile
-                wait.Until(ExpectedConditions.ElementToBeClickable(By.ClassName("_acuj")));
+                wait.Until(ExpectedConditions.ElementToBeClickable(By.ClassName("_acan")));
                 driver.Navigate().GoToUrl("https://www.instagram.com/" + profile);
 
 
@@ -101,13 +101,6 @@ namespace DataAccessLayer.Impl
 
                 wait.Until(ExpectedConditions.ElementToBeClickable(By.ClassName("_aabd")));
 
-                //target all images on the page
-                //for (int i = 1; i < 6; i++)
-                //{
-                //    wait.Until(ExpectedConditions.ElementIsVisible(By.XPath($"/html/body/div[1]/div/div/div/div[1]/div/div/div/div[1]/section/main/div/div[3]/article/div[1]/div/div[{i}]")));
-                //    driver.ExecuteScript("window.scrollTo(0, 4000);");
-
-                //}
 
 
 

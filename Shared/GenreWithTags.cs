@@ -10,5 +10,11 @@ namespace Shared
     {
         public string GenreName { get; set; }
         public List<string> Tags { get; set; }
+
+
+        public GenreWithTags()
+        {
+            this.Tags = new List<string>();
+        }
     }
 }

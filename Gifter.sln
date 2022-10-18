@@ -20,7 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens
 		.env = .env
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cache-DatabaseTimeTrigger", "Cache-DatabaseTimeTrigger\Cache-DatabaseTimeTrigger.csproj", "{2175E1DF-8172-4499-BB9F-BE1BC4FE1443}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cache-DatabaseTimeTrigger", "Cache-DatabaseTimeTrigger\Cache-DatabaseTimeTrigger.csproj", "{2175E1DF-8172-4499-BB9F-BE1BC4FE1443}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

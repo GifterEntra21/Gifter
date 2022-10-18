@@ -29,6 +29,10 @@ namespace NeuralNetworkLayer
             // Create a client
             try
             {
+                if (urls == null)
+                {
+                    return ResponseFactory.CreateInstance().CreateSuccessDataResponse<ImageTag>(new List<ImageTag>());
+                }
                 ComputerVisionClient client = Authenticate(endpoint, subscriptionKey);
 
                 /*
@@ -42,6 +46,7 @@ namespace NeuralNetworkLayer
 
                 List<ImageTag> tags = new List<ImageTag>();
                 List<ImageAnalysis> results = new List<ImageAnalysis>();
+
                 foreach (string url in urls)
                 {
                     ImageAnalysis img = await AnalyzeImageUrl(client, url);

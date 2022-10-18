@@ -31,7 +31,14 @@ namespace NeuralNetworkLayer.Impl
                     {
                         isGeneric = false;
                         int totalCount = genresTagsCounts.GetValueOrDefault(genre.GenreName) + tag.Count;
-                        genresTagsCounts.Add(genre.GenreName, totalCount);
+                        if (genresTagsCounts.ContainsKey(genre.GenreName))
+                        {
+                            genresTagsCounts[genre.GenreName] = totalCount;
+                        }
+                        else
+                        {
+                            genresTagsCounts.Add(genre.GenreName, totalCount);
+                        }
                     }
                 }
             }

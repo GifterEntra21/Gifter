@@ -33,14 +33,17 @@ namespace GiterWebAPI.Controllers
         {
             string _profile = request.Replace("@", "");
             DataResponse<TagWithCount> tags = await _WebScrapperService.Scrape(_profile);
-            DataResponse<Product> giftsResponse = await _WebScrapperService.GetGifts(tags.ItemList, _profile);
-            List<Product> gifts = giftsResponse.ItemList;
-
-            if (gifts == null)
+            if (!tags.HasSuccess)
             {
                 return NotFound();
             }
-
+            DataResponse<Product> giftsResponse = await _WebScrapperService.GetGifts(tags.ItemList, _profile);
+            
+            if (!giftsResponse.HasSuccess)
+            {
+                return NotFound();
+            }
+            List<Product> gifts = giftsResponse.ItemList;
             return Ok(gifts);
         }
 

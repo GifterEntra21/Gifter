@@ -22,10 +22,10 @@ namespace Cache_DatabaseTimeTrigger
         }
 
         [FunctionName("RedisDatabaseTrigger")]
-        public async Task Run([TimerTrigger("1 * * * * *")]TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("* 30 * * * *")]TimerInfo myTimer, ILogger log)
         {
 
-            string a = _Cache.GetString("KeyPadrao");
+            string a = await _Cache.GetStringAsync("KeyPadrao");
 
             Dictionary<string,int> redisCache = JsonSerializer.Deserialize<Dictionary<string, int>>(a);
 

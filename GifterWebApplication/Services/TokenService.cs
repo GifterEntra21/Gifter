@@ -21,7 +21,7 @@ namespace JwtAuthentication.Server.Services
 
                 if (AppSettings.IsDevelopingMode)
                 {
-                    ExpiryTime = DateTime.Now.AddMinutes(300);
+                    ExpiryTime = DateTime.Now.AddMinutes(1);
                 }
                 else
                 {
@@ -65,7 +65,7 @@ namespace JwtAuthentication.Server.Services
                 {
 
                     ValidateAudience = false, //Valida o "consumidor", ou seja, quem faz as requisições
-                    ValidateIssuer = true, //Valida o "emissor", ou seja, quem recebe as requisições
+                    ValidateIssuer = false, //Valida o "emissor", ou seja, quem recebe as requisições
                     ValidateIssuerSigningKey = true,//Valida a assinatura do "emissor", ou seja, a criptografia que gerou o acess Token
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345")),
                     ValidateLifetime = false //nesse caso não importa se o token está ou nao expira, pois para nos so importa os dados que ele contem

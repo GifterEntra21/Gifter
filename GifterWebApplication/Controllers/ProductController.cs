@@ -117,9 +117,9 @@ namespace GifterWebApplication.Controllers
         [Route("ClickPlus")]
         [ProducesResponseType(200)]
         [Authorize(Roles ="Manager")]
-        public async Task<IActionResult>  ClickPlus([FromBody] string productID)
+        public async Task<IActionResult>  ClickPlus([FromBody] DefaultRequest productID)
         {
-           var a = await _ProductService.ClicksPlus(productID);
+           var a = await _ProductService.ClicksPlus(productID.Request);
            return Ok(a);
         }
     }

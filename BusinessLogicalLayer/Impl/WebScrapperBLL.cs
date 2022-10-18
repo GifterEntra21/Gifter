@@ -25,8 +25,16 @@ namespace BusinessLogicalLayer.Impl
             try
             {
                 ComputerVision vision = new ComputerVision();
-                var scrape = await _webScrapperService.ScrapeInstagramWithDefaultAccount(false, profile);
+                DataResponse<string> scrape = await _webScrapperService.ScrapeInstagramWithDefaultAccount(false, profile);
+                if (!scrape.HasSuccess)
+                {
+                    return ResponseFactory.CreateInstance().CreateFailedDataResponse<TagWithCount>(null);
+                }
                 DataResponse<ImageTag> tags = await vision.CheckTags(scrape.ItemList);
+                if (!tags.HasSuccess)
+                {
+                    return ResponseFactory.CreateInstance().CreateFailedDataResponse<TagWithCount>(null);
+                }
                 List<string> tagsNames = new List<string>();
                 foreach (var tag in tags.ItemList)
                 {
