@@ -14,7 +14,7 @@
         public static GenreWithTags AnimeTags = new GenreWithTags 
         {
             GenreName = "anime",
-            Tags = {"anime", "manga", "fiction", "cartonn", "drawing", "art", "animation",
+            Tags = {"anime", "manga", "fiction", "cartoon", "drawing", "art", "animation",
             "animated cartoon", "illustration", "fictional character", "comic","comics", "toy", "collection", "book", "hair coloring",
             "novel", "bookcase", "figure", "animal figure", "baby toys", "fashion accessory", "costume", "cosplay", "asian", "poster" }
         };
@@ -24,7 +24,7 @@
             GenreName = "exoteric",
             Tags = {"plant", "garden", "housplant", "flowerpot",
             "flower", "art", "candle", "animal", "grass", "lady", "christmas", "candle holder", "tree", "still life",
-            "floral design", "sunflower", "forest", "nature", "meadow", "insect", "star"}
+            "floral design", "sunflower", "forest", "nature", "meadow", "insect", "star", "drawing", "art"}
         };
 
         public static GenreWithTags FashionTags = new GenreWithTags
@@ -53,11 +53,6 @@
             "car seat cover", "road", "sports sedan", "sedan", "coupe", "hatch", "sports coupe", "sports car", "automotive parking light",
             "parking lot", "garage", "automotive wheel system", "headlamp", "automobile repair shop", "engine", "motor", "automotive light bulb",
             "vehicle door", "windshield", "performance car", "supercar", "hypercar", "bmw", "city car", "motor vehicle", "mechanic", "automotive mechanic" }
-        };
-
-        public static GenreWithTags GenericTags = new GenreWithTags
-        {
-            GenreName = "generic"
         };
 
         public static List<GenreWithTags> GenresList { get { return new List<GenreWithTags> { SportTags, AnimeTags, ExotericTags, FashionTags,
