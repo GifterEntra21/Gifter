@@ -141,7 +141,7 @@ namespace BusinessLogicalLayer.Impl
                 {
                     int qtdClicks = clicksCache[_productId];
 
-                    clicksCache[_productId] = qtdClicks++;
+                    clicksCache[_productId]++;
                     
                 }
                 //Serializado novamente 
