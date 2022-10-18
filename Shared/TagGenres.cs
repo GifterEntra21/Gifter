@@ -12,6 +12,7 @@
             "tournament", "artificial turf", "soccer-specific stadium", "football player", "ball", "sports equipment"}
             };
 
+
             animeTags = new GenreWithTags
             {
                 GenreName = "anime",
@@ -56,6 +57,7 @@
             "vehicle door", "windshield", "performance car", "supercar", "hypercar", "bmw", "city car", "motor vehicle", "mechanic", "automotive mechanic" }
             };
         }
+
 
         private static GenreWithTags sportTags;
 

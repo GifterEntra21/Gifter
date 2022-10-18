@@ -8,13 +8,20 @@ namespace DataAccessLayer
 {
     public class CosmosDb : ICosmosDB
     {
-        private static string CosmosEndpoint = "https://gifter-cosmos.documents.azure.com:443/";
-        private static string CosmosPrimaryKey = "z0NHDlMzcRt0UYPl8erRzTiGQdJL6jJfiPjN5LbG34csnVljrwBX4noolwNH68I3I6L1W8KjqFGOePVjzE0Y6g==";
+        string _cosmosURI;
+        string _CosmosPrimaryKey;
+        public CosmosDb()
+        {
+            DotNetEnv.Env.Load("../");
+
+            _cosmosURI = Environment.GetEnvironmentVariable("COSMOS_URI");
+            _CosmosPrimaryKey = Environment.GetEnvironmentVariable("COSMOS_PRIMARY_KEY");
+        }
 
         private async Task<Container> CosmosConnect(string containerName)
         {
-            CosmosClient client = new(CosmosEndpoint, CosmosPrimaryKey);
-            
+            CosmosClient client = new(_cosmosURI, _CosmosPrimaryKey);
+
             return client.GetContainer("GifterDb", containerName);
         }
 
