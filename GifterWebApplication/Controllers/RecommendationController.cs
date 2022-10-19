@@ -28,23 +28,17 @@ namespace GiterWebAPI.Controllers
         [Authorize(Roles = "Manager")]
         [ProducesResponseType(200, Type = typeof(List<Product>))]
         // Scrape the profile for images and recommend gifts based on that
-        public async Task<IActionResult> GetGifts([FromQuery] string request) 
+        public async Task<IActionResult> GetGifts([FromQuery] string profile) 
         {
-            string _profile = request.Replace("@", "");
-            DataResponse<TagWithCount> tags = await _WebScrapperService.Scrape(_profile);
-            if (!tags.HasSuccess)
-            {
-                return NotFound();
-            }
+            string _profile = profile.Replace("@", "");
 
-            DataResponse<Product> giftsResponse = await _WebScrapperService.GetGifts(tags.ItemList, _profile);
+            DataResponse<Product> giftsResponse = await _WebScrapperService.VerifyProfile(_profile);
             
             if (!giftsResponse.HasSuccess)
             {
-                return NotFound();
+                return BadRequest();
             }
             List<Product> gifts = giftsResponse.ItemList;
-
             return Ok(gifts);
         }
 

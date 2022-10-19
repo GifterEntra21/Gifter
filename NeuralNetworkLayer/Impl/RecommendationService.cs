@@ -56,7 +56,7 @@ namespace NeuralNetworkLayer.Impl
         }
 
         public async Task<DataResponse<Product>> GetGifts(List<TagWithCount> tags, string username)
-        {
+        {           
             InstagramProfile profile = CategorizeProfileByTags(tags, username);
 
             return await _ProductService.GetByGenre(profile.Genre);

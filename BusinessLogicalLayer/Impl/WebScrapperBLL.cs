@@ -3,9 +3,11 @@ using DataAccessLayer.Impl;
 using DataAccessLayer.Interfaces;
 using Entities;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
+using Microsoft.Extensions.Caching.Distributed;
 using NeuralNetworkLayer;
 using NeuralNetworkLayer.Interfaces;
 using Shared.Responses;
+using System.Text.Json;
 
 namespace BusinessLogicalLayer.Impl
 {
@@ -13,13 +15,66 @@ namespace BusinessLogicalLayer.Impl
     {
         public readonly IWebScrapperDAL _webScrapperService;
         public readonly IRecommendationModel _recommendationModelService;
+        public readonly IDistributedCache _cache;
 
-        public WebScrapperBLL(IWebScrapperDAL webScrapperService, IRecommendationModel recommendationModelService)
+        public WebScrapperBLL(IWebScrapperDAL webScrapperService, IRecommendationModel recommendationModelService, IDistributedCache cache)
         {
             _webScrapperService = webScrapperService;
             _recommendationModelService = recommendationModelService;
+            _cache = cache;
         }
 
+        public async Task<DataResponse<Product>> VerifyProfile(string profile)
+        {
+            try
+            {
+                Dictionary<string, List<Product>> profilesCache = new();
+                //busca o cache do redis
+                string json = await _cache.GetStringAsync("Profiles");
+                //se nao for nulo deserializa
+                if (!string.IsNullOrWhiteSpace(json))
+                {
+
+                    profilesCache = JsonSerializer.Deserialize<Dictionary<string, List<Product>>>(json);
+                    //se existir retorna os produtos
+                    if (profilesCache.ContainsKey(profile))
+                    {
+                        return ResponseFactory.CreateInstance().CreateSuccessDataResponse<Product>(profilesCache[profile]);
+                    }                        
+                }
+                //se nao existir ou for nulo
+                //executa o scrapping
+                DataResponse<TagWithCount> tags = await Scrape(profile);
+
+                //se ele nao tiver sucesso, ja retorna o erro
+                if (!tags.HasSuccess)
+                {
+                    return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(null);
+                }
+                //busca os presentes no banco
+                DataResponse<Product> giftsResponse = await GetGifts(tags.ItemList, profile);
+
+                //se nao tiver sucesso ja retorna o erro
+                if (!giftsResponse.HasSuccess)
+                {
+                    return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(null);
+                }
+                //adiciona na lista, nao importa se estiver vazia ou nao
+                profilesCache.Add(profile, giftsResponse.ItemList);
+                //converte pra  json
+                string newProfileCache = JsonSerializer.Serialize(profilesCache);
+
+                //Setado novamente
+                await _cache.SetStringAsync("Profiles", newProfileCache);
+
+                return ResponseFactory.CreateInstance().CreateSuccessDataResponse<Product>(giftsResponse.ItemList);
+            }
+            catch (Exception ex)
+            {
+                return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(ex);
+            }
+
+        }
         public async Task<DataResponse<TagWithCount>> Scrape(string profile)
         {
             try
@@ -84,5 +139,6 @@ namespace BusinessLogicalLayer.Impl
         {
             return await _recommendationModelService.GetGifts(tags, username);
         }
+
     }
 }

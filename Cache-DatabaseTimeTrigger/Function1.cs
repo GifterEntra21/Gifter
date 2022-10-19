@@ -22,7 +22,7 @@ namespace Cache_DatabaseTimeTrigger
         }
 
         [FunctionName("RedisDatabaseTrigger")]
-        public async Task Run([TimerTrigger("* 30 * * * *")]TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("* /30 * * * *")]TimerInfo myTimer, ILogger log)
         {
 
             string a = await _Cache.GetStringAsync("KeyPadrao");
@@ -45,6 +45,7 @@ namespace Cache_DatabaseTimeTrigger
                         await _Cache.SetStringAsync("KeyPadrao", e);
                     }
                 }
+                await _Cache.SetStringAsync("Profiles", " ");
 
             }
         }

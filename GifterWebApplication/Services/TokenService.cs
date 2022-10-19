@@ -21,7 +21,7 @@ namespace JwtAuthentication.Server.Services
 
                 if (AppSettings.IsDevelopingMode)
                 {
-                    ExpiryTime = DateTime.Now.AddMinutes(1);
+                    ExpiryTime = DateTime.Now.AddMinutes(300);
                 }
                 else
                 {
