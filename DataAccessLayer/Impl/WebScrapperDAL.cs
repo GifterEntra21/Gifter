@@ -74,7 +74,7 @@ namespace DataAccessLayer.Impl
                 }
 
                 //opens the website
-                WebDriverWait wait = new WebDriverWait(driver, new TimeSpan(0, 0, 30));
+                WebDriverWait wait = new WebDriverWait(driver, new TimeSpan(0, 0, 60));
                 driver.Navigate().GoToUrl("https://www.instagram.com/");
 
 
@@ -84,15 +84,18 @@ namespace DataAccessLayer.Impl
 
 
                 //writes the account's username and password and clicks to login
-                SocialMediaAccount sca = await _CosmosService.GetDefaultInstagramAccount();
-                username.SendKeys(sca.Email);
-                password.SendKeys(sca.Password);
+                List<SocialMediaAccount> sca = await _CosmosService.GetDefaultInstagramAccount();
+                username.SendKeys(sca[1].Email);
+                password.SendKeys(sca[1].Password);
 
                 wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("button[type='submit']"))).Click();
 
 
                 //searches the user profile
-                wait.Until(ExpectedConditions.ElementToBeClickable(By.ClassName("_acan")));
+                //ElementToBeSelected
+                //wait.Until(ExpectedConditions.ElementToBeClickable(By.ClassName("_acan")));
+                //https://www.instagram.com/accounts/onetap/?next=%2F
+                wait.Until(ExpectedConditions.UrlContains("https://www.instagram.com/accounts/onetap/?next=%2F"));
                 driver.Navigate().GoToUrl("https://www.instagram.com/" + profile);
 
 

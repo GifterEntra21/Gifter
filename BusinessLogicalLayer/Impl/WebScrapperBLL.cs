@@ -16,12 +16,14 @@ namespace BusinessLogicalLayer.Impl
         public readonly IWebScrapperDAL _webScrapperService;
         public readonly IRecommendationModel _recommendationModelService;
         public readonly IDistributedCache _cache;
+        public readonly IProductBLL _productService;
 
-        public WebScrapperBLL(IWebScrapperDAL webScrapperService, IRecommendationModel recommendationModelService, IDistributedCache cache)
+        public WebScrapperBLL(IWebScrapperDAL webScrapperService, IRecommendationModel recommendationModelService, IDistributedCache cache, IProductBLL productService)
         {
             _webScrapperService = webScrapperService;
             _recommendationModelService = recommendationModelService;
             _cache = cache;
+            _productService = productService;
         }
 
         public async Task<DataResponse<TagWithCount>> Scrape(string profile)
@@ -84,61 +86,58 @@ namespace BusinessLogicalLayer.Impl
 
         }
 
-        public async Task<DataResponse<Product>> GetGifts(List<TagWithCount> tags, string username)
-        {
-            return await _recommendationModelService.GetGifts(tags, username);
-        }
-
-        public async Task<DataResponse<Product>> VerifyProfile(string profile)
+        public async Task<DataResponse<Product>> VerifyProfile(string username)
         {
             try
             {
-                Dictionary<string, List<Product>> profilesCache = new();
+                Dictionary<string, string> profilesCache = new();
                 //busca o cache do redis
                 string json = await _cache.GetStringAsync("Profiles");
                 //se nao for nulo deserializa
                 if (!string.IsNullOrWhiteSpace(json))
                 {
 
-                    profilesCache = JsonSerializer.Deserialize<Dictionary<string, List<Product>>>(json);
+                    profilesCache = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
                     //se existir retorna os produtos
-                    if (profilesCache.ContainsKey(profile))
+                    if (profilesCache.ContainsKey(username))
                     {
-                        return ResponseFactory.CreateInstance().CreateSuccessDataResponse<Product>(profilesCache[profile]);
+                        DataResponse<Product> products = await _productService.GetByGenre(profilesCache[username]);
+
+                        return ResponseFactory.CreateInstance().CreateSuccessDataResponse<Product>(products.ItemList);
                     }
                 }
-                //se nao existir ou for nulo
-                //executa o scrapping
-                DataResponse<TagWithCount> tags = await Scrape(profile);
-
-                //se ele nao tiver sucesso, ja retorna o erro
+                //como o perfil nao existe categoriza
+                DataResponse<TagWithCount> tags = await Scrape(username);
                 if (!tags.HasSuccess)
                 {
-                    return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(null);
+                    return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(null,"nao foi possivel verficar o perfil");
                 }
-                //busca os presentes no banco
-                DataResponse<Product> giftsResponse = await GetGifts(tags.ItemList, profile);
-
-                //se nao tiver sucesso ja retorna o erro
-                if (!giftsResponse.HasSuccess)
+                SingleResponse<InstagramProfile> profile = await _recommendationModelService.CategorizeProfileByTags(tags.ItemList, username);
+                if (!profile.HasSucces)
                 {
-                    return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(null);
+                    return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(null, "nao foi possivel categorizar o perfil");
                 }
                 //adiciona na lista, nao importa se estiver vazia ou nao
-                profilesCache.Add(profile, giftsResponse.ItemList);
+                profilesCache.Add(username, profile.Item.Genre);
                 //converte pra  json
                 string newProfileCache = JsonSerializer.Serialize(profilesCache);
-
                 //Setado novamente
                 await _cache.SetStringAsync("Profiles", newProfileCache);
 
-                return ResponseFactory.CreateInstance().CreateSuccessDataResponse<Product>(giftsResponse.ItemList);
+                DataResponse<Product> newProducts = await _productService.GetByGenre(profile.Item.Genre);
+                if (!newProducts.HasSuccess)
+                {
+                    return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(null,"nao foir possivel acessar os produtos");
+                }
+
+                return ResponseFactory.CreateInstance().CreateSuccessDataResponse<Product>(newProducts.ItemList);
             }
             catch (Exception ex)
             {
                 return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(ex);
             }
-
         }
+
+
     }
 }

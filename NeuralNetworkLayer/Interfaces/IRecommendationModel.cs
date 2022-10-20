@@ -10,6 +10,6 @@ namespace NeuralNetworkLayer.Interfaces
 {
     public interface IRecommendationModel
     {
-        public Task<DataResponse<Product>> GetGifts(List<TagWithCount> tags, string username);
+        public Task<SingleResponse<InstagramProfile>> CategorizeProfileByTags(List<TagWithCount> tags, string username);
     }
 }

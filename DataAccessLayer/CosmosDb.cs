@@ -152,11 +152,11 @@ namespace DataAccessLayer
         }
 
 
-        public async Task<SocialMediaAccount> GetDefaultInstagramAccount()
+        public async Task<List<SocialMediaAccount>> GetDefaultInstagramAccount()
         {
             string query = "SELECT * FROM c WHERE c.site = 'instagram.com'";
-            SingleResponse<SocialMediaAccount> response = await GetSingleItem<SocialMediaAccount>(query, "WebScrapeDefaultAccounts");
-            return response.Item;
+            DataResponse<SocialMediaAccount> response = await GetItemList<SocialMediaAccount>(query, "WebScrapeDefaultAccounts");
+            return response.ItemList;
 
         }
     }
