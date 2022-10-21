@@ -82,8 +82,7 @@ namespace BusinessLogicalLayer.Impl
         {
             try
             {
-                
-
+           
                 return await _ProductService.Insert(product);
 
             }

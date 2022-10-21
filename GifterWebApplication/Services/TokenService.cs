@@ -10,7 +10,7 @@ namespace JwtAuthentication.Server.Services
 {
     public class TokenService : ITokenService
     {
-        private DateTime ExpiryTime { get; set; }
+
 
         public SingleResponse<string> GenerateAccessToken(IEnumerable<Claim> claims)
         {
@@ -19,20 +19,11 @@ namespace JwtAuthentication.Server.Services
                 SymmetricSecurityKey secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"));
                 SigningCredentials signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
-                if (AppSettings.IsDevelopingMode)
-                {
-                    ExpiryTime = DateTime.Now.AddMinutes(1);
-                }
-                else
-                {
-                    ExpiryTime = DateTime.Now.AddMinutes(1);
-                }
-
                 JwtSecurityToken tokeOptions = new JwtSecurityToken(
                     issuer: "https://localhost:7008",
                     audience: "https://localhost:5001",
                     claims: claims,
-                    expires: ExpiryTime,
+                    expires: DateTime.Now.AddMinutes(1),
                     signingCredentials: signinCredentials
                 );
 
@@ -44,9 +35,8 @@ namespace JwtAuthentication.Server.Services
 
                 return ResponseFactory.CreateInstance().CreateFailedSingleResponse<string>(ex);
             }
-            
-        }
 
+        }
         public string GenerateRefreshToken()
         {
             byte[] randomNumber = new byte[32];
@@ -90,7 +80,7 @@ namespace JwtAuthentication.Server.Services
 
                 return ResponseFactory.CreateInstance().CreateFailedSingleResponse<ClaimsPrincipal>(ex);
             }
-            
+
         }
     }
 }

@@ -74,7 +74,7 @@ namespace DataAccessLayer.Impl
                 }
 
                 //opens the website
-                WebDriverWait wait = new WebDriverWait(driver, new TimeSpan(0, 0, 60));
+                WebDriverWait wait = new WebDriverWait(driver, new TimeSpan(0, 0, 30));
                 driver.Navigate().GoToUrl("https://www.instagram.com/");
 
 
@@ -83,19 +83,22 @@ namespace DataAccessLayer.Impl
                 IWebElement password = wait.Until(ExpectedConditions.ElementToBeClickable(By.Name("password")));
 
 
-                //writes the account's username and password and clicks to login
-                List<SocialMediaAccount> sca = await _CosmosService.GetDefaultInstagramAccount();
-                username.SendKeys(sca[1].Email);
-                password.SendKeys(sca[1].Password);
+                //search instagram accounts in database
+                List<SocialMediaAccount> accounts = await _CosmosService.GetDefaultInstagramAccount();
+                //Randomize an account
+                Random random = new();
+                int loginRandomAccount = random.Next(0, accounts.Count);
+
+                Console.WriteLine(loginRandomAccount);
+                username.SendKeys(accounts[loginRandomAccount].Email);
+                password.SendKeys(accounts[loginRandomAccount].Password);
 
                 wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("button[type='submit']"))).Click();
 
 
                 //searches the user profile
-                //ElementToBeSelected
-                //wait.Until(ExpectedConditions.ElementToBeClickable(By.ClassName("_acan")));
-                //https://www.instagram.com/accounts/onetap/?next=%2F
                 wait.Until(ExpectedConditions.UrlContains("https://www.instagram.com/accounts/onetap/?next=%2F"));
+
                 driver.Navigate().GoToUrl("https://www.instagram.com/" + profile);
 
 
@@ -129,7 +132,6 @@ namespace DataAccessLayer.Impl
                 {
                     driver.Quit();
                 }
-
             }
             
         }

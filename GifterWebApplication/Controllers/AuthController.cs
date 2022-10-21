@@ -28,7 +28,7 @@ namespace GifterWebApplication.Controllers
 
         [HttpPost]
         [Route("Login")]
-        //[ProducesResponseType(200, Type = typeof(AuthenticationResponse))]
+        [ProducesResponseType(200, Type = typeof(AuthenticationResponse))]
         public async Task<IActionResult> Login([FromBody]AuthenticationRequest loginModel)
         {
             if (loginModel is null)
@@ -42,8 +42,6 @@ namespace GifterWebApplication.Controllers
             {
                 return Unauthorized();
             }
-            //fazer a verificação de login com o cosmos
-
 
             var claims = new List<Claim>
             {
@@ -57,7 +55,6 @@ namespace GifterWebApplication.Controllers
             user.Item.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
 
             await _userService.Update(user.Item);
-            //substituir por update?
 
             return Ok(new AuthenticationResponse
             {

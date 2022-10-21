@@ -110,7 +110,7 @@ namespace BusinessLogicalLayer.Impl
                 DataResponse<TagWithCount> tags = await Scrape(username);
                 if (!tags.HasSuccess)
                 {
-                    return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(null,"nao foi possivel verficar o perfil");
+                    return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(null, "nao foi possivel verficar o perfil");
                 }
                 SingleResponse<InstagramProfile> profile = await _recommendationModelService.CategorizeProfileByTags(tags.ItemList, username);
                 if (!profile.HasSucces)
@@ -127,7 +127,7 @@ namespace BusinessLogicalLayer.Impl
                 DataResponse<Product> newProducts = await _productService.GetByGenre(profile.Item.Genre);
                 if (!newProducts.HasSuccess)
                 {
-                    return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(null,"nao foir possivel acessar os produtos");
+                    return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(null, "nao foir possivel acessar os produtos");
                 }
 
                 return ResponseFactory.CreateInstance().CreateSuccessDataResponse<Product>(newProducts.ItemList);
