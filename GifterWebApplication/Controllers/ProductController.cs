@@ -47,7 +47,7 @@ namespace GifterWebApplication.Controllers
 
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(Product))]
-        [Authorize]
+        //[Authorize]
         [Route("AllProducts")]
 
         public async Task<IActionResult> GetAllProducts()

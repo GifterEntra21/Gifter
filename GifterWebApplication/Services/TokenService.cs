@@ -23,7 +23,7 @@ namespace JwtAuthentication.Server.Services
                     issuer: "https://localhost:7008",
                     audience: "https://localhost:5001",
                     claims: claims,
-                    expires: DateTime.Now.AddMinutes(1),
+                    expires: DateTime.Now.AddMinutes(5),
                     signingCredentials: signinCredentials
                 );
 

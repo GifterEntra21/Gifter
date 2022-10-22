@@ -1,0 +1,22 @@
+{
+  "dependencies": {
+    "identityapp1": {
+      "ignored": "true",
+      "suggestion": "true",
+      "type": "identityapp",
+      "connectionId": ""
+    },
+    "cosmosdb1": {
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.DocumentDB/databaseAccounts/gifter-cosmos",
+      "type": "cosmosdb.azure",
+      "connectionId": "AzureCosmosDbSettings"
+    },
+    "redis1": {
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Cache/Redis/RedisGifterDatabase2",
+      "type": "redis.azure",
+      "connectionId": "AzureRedisConnection"
+    }
+  }
+}

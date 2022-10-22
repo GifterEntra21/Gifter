@@ -66,7 +66,7 @@ namespace DataAccessLayer.Impl
                     options.AddArgument("--deny-permission-prompts");
 
                     // Note we set our token here, with `true` as a third arg
-                    options.AddAdditionalOption("browserless:token", "6d199b73-289d-40dd-aff9-a36e25a5623a");
+                    options.AddAdditionalOption("browserless:token", "c7af2e95-ec88-4367-9c9f-16bfd6462f1e");
 
                     driver = new RemoteWebDriver(
                       new Uri("https://chrome.browserless.io/webdriver"), options.ToCapabilities()

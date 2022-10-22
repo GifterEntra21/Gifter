@@ -10,12 +10,11 @@ namespace DataAccessLayer
     {
         string _cosmosURI;
         string _CosmosPrimaryKey;
-        public CosmosDb()
-        {
-            DotNetEnv.Env.Load("../");
 
-            _cosmosURI = Environment.GetEnvironmentVariable("COSMOS_URI");
-            _CosmosPrimaryKey = Environment.GetEnvironmentVariable("COSMOS_PRIMARY_KEY");
+        public CosmosDb(string cosmosURI,string CosmosPrimaryKey)
+        {
+            _cosmosURI = cosmosURI;
+            _CosmosPrimaryKey = CosmosPrimaryKey;
         }
 
         private async Task<Container> CosmosConnect(string containerName)

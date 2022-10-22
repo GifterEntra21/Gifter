@@ -17,26 +17,27 @@ namespace BusinessLogicalLayer.Impl
         public readonly IRecommendationModel _recommendationModelService;
         public readonly IDistributedCache _cache;
         public readonly IProductBLL _productService;
+        public readonly IComputerVision _vision;
 
-        public WebScrapperBLL(IWebScrapperDAL webScrapperService, IRecommendationModel recommendationModelService, IDistributedCache cache, IProductBLL productService)
+        public WebScrapperBLL(IWebScrapperDAL webScrapperService, IRecommendationModel recommendationModelService, IDistributedCache cache, IProductBLL productService, IComputerVision vision)
         {
             _webScrapperService = webScrapperService;
             _recommendationModelService = recommendationModelService;
             _cache = cache;
             _productService = productService;
+            _vision = vision;
         }
 
         public async Task<DataResponse<TagWithCount>> Scrape(string profile)
         {
             try
             {
-                ComputerVision vision = new ComputerVision();
                 DataResponse<string> scrape = await _webScrapperService.ScrapeInstagramWithDefaultAccount(false, profile);
                 if (!scrape.HasSuccess)
                 {
                     return ResponseFactory.CreateInstance().CreateFailedDataResponse<TagWithCount>(null);
                 }
-                DataResponse<ImageTag> tags = await vision.CheckTags(scrape.ItemList);
+                DataResponse<ImageTag> tags = await _vision.CheckTags(scrape.ItemList);
                 if (!tags.HasSuccess)
                 {
                     return ResponseFactory.CreateInstance().CreateFailedDataResponse<TagWithCount>(null);
@@ -92,7 +93,12 @@ namespace BusinessLogicalLayer.Impl
             {
                 Dictionary<string, string> profilesCache = new();
                 //busca o cache do redis
-                string json = await _cache.GetStringAsync("Profiles");
+                string json = "";
+
+                //json= await _cache.GetStringAsync("Profiles");
+                
+
+
                 //se nao for nulo deserializa
                 if (!string.IsNullOrWhiteSpace(json))
                 {
