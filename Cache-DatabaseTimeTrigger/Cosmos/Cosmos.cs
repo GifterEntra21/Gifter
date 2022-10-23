@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Cache_DatabaseTimeTrigger
 {
-    public class Cosmos
+    public class CosmosDB
     {
         private static string CosmosEndpoint = "https://gifter-cosmos.documents.azure.com:443/";
         private static string CosmosPrimaryKey = "z0NHDlMzcRt0UYPl8erRzTiGQdJL6jJfiPjN5LbG34csnVljrwBX4noolwNH68I3I6L1W8KjqFGOePVjzE0Y6g==";

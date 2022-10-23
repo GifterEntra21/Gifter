@@ -5,7 +5,6 @@ using Entities;
 using BusinessLogicalLayer.Impl;
 using BusinessLogicalLayer.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using GifterWebApplication.Models.RecommendationRequest;
 
 namespace GiterWebAPI.Controllers
 {

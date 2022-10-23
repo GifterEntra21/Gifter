@@ -44,6 +44,10 @@ builder.Services.AddTransient<IComputerVision>(opt =>
     var computerClient = new ComputerVision(subscriptionKey, endpoint);
     return computerClient;
 });
+builder.Services.AddDistributedRedisCache(opt =>
+{
+    opt.Configuration = builder.Configuration["AzureRedisConnection"];
+});
 builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
@@ -55,19 +59,15 @@ builder.Services.AddAuthentication(opt => {
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true,
+            ValidateIssuer = false,
             ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = "https://localhost:7008",
+            ValidIssuer = "https://gifterserver.azurewebsites.net",
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345")),
             ClockSkew = TimeSpan.Zero
         };
     });
-builder.Services.AddDistributedRedisCache(opt =>
-{
-    opt.Configuration = builder.Configuration["AzureRedisConnection"];
-});
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("EnableCORS", builder =>

@@ -23,10 +23,18 @@ namespace DataAccessLayer.Impl
         }
 
         private IWebDriver driver { get; set; }
+
         public async Task<DataResponse<string>> ScrapeInstagramWithDefaultAccount(bool headless, string profile)
         {
             try
             {
+
+                List<SocialMediaAccount> accounts = await _CosmosService.GetDefaultInstagramAccount();
+                //Randomize an account
+                Random random = new();
+                int loginRandomAccount = random.Next(0, accounts.Count);
+
+             
                 if (AppSettings.IsDevelopingMode)
                 {
                     ChromeOptions options = new ChromeOptions();
@@ -66,7 +74,7 @@ namespace DataAccessLayer.Impl
                     options.AddArgument("--deny-permission-prompts");
 
                     // Note we set our token here, with `true` as a third arg
-                    options.AddAdditionalOption("browserless:token", "c7af2e95-ec88-4367-9c9f-16bfd6462f1e");
+                    options.AddAdditionalOption("browserless:token", accounts[loginRandomAccount].BrowserlessToken);
 
                     driver = new RemoteWebDriver(
                       new Uri("https://chrome.browserless.io/webdriver"), options.ToCapabilities()
@@ -84,12 +92,7 @@ namespace DataAccessLayer.Impl
 
 
                 //search instagram accounts in database
-                List<SocialMediaAccount> accounts = await _CosmosService.GetDefaultInstagramAccount();
-                //Randomize an account
-                Random random = new();
-                int loginRandomAccount = random.Next(0, accounts.Count);
-
-                Console.WriteLine(loginRandomAccount);
+                
                 username.SendKeys(accounts[loginRandomAccount].Email);
                 password.SendKeys(accounts[loginRandomAccount].Password);
 
@@ -101,9 +104,6 @@ namespace DataAccessLayer.Impl
 
                 driver.Navigate().GoToUrl("https://www.instagram.com/" + profile);
 
-
-                //scrolls down to scrape more images
-                //maybe the index could be a parameter, so the user could define how much they want to scroll
 
                 wait.Until(ExpectedConditions.ElementToBeClickable(By.ClassName("_aabd")));
 

@@ -47,15 +47,6 @@
             "audio equipment", "toy", "peripheral", "gadget", "earphone", "laptop", "netbook", "touchpad" }
             };
 
-            carTags = new GenreWithTags
-            {
-                GenreName = "car",
-                Tags = new List<string>(){"vehicle", "land vehicle", "car", "race car", "race", "wheel", "tire",
-            "parking", "parked", "auto part", "transport", "automotive", "automotive lighting", "car seat", "drive", "driver", "driving", "automotive design",
-            "car seat cover", "road", "sports sedan", "sedan", "coupe", "hatch", "sports coupe", "sports car", "automotive parking light",
-            "parking lot", "garage", "automotive wheel system", "headlamp", "automobile repair shop", "engine", "motor", "automotive light bulb",
-            "vehicle door", "windshield", "performance car", "supercar", "hypercar", "bmw", "city car", "motor vehicle", "mechanic", "automotive mechanic" }
-            };
         }
 
 
@@ -69,8 +60,6 @@
 
         private static GenreWithTags gamerTags;
 
-        private static GenreWithTags carTags;
-
-        public static List<GenreWithTags> GenresList { get { return new List<GenreWithTags> { sportTags, animeTags, exotericTags,fashionTags,gamerTags, carTags }; } }
+        public static List<GenreWithTags> GenresList { get { return new List<GenreWithTags> { sportTags, animeTags, exotericTags,fashionTags,gamerTags }; } }
     }
 }

@@ -16,14 +16,19 @@ namespace JwtAuthentication.Server.Services
         {
             try
             {
+                DateTime expiryTime = DateTime.Now.AddMinutes(5);
+                if (AppSettings.IsDevelopingMode)
+                {
+                    expiryTime = DateTime.Now.AddHours(8);
+                }
                 SymmetricSecurityKey secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"));
                 SigningCredentials signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
                 JwtSecurityToken tokeOptions = new JwtSecurityToken(
-                    issuer: "https://localhost:7008",
-                    audience: "https://localhost:5001",
+                    issuer: "https://gifterserver.azurewebsites.net",
+                    audience: "https://gifter-e21.netlify.app",
                     claims: claims,
-                    expires: DateTime.Now.AddMinutes(5),
+                    expires: expiryTime,
                     signingCredentials: signinCredentials
                 );
 

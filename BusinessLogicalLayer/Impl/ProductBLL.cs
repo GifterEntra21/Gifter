@@ -51,7 +51,7 @@ namespace BusinessLogicalLayer.Impl
                 return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(ex);
             }
         }
-
+ 
         public async Task<DataResponse<Product>> GetByGenre(string genre)
         {
             try

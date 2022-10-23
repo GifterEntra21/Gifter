@@ -11,12 +11,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Cache_DatabaseTimeTrigger
 {
-    public class Function1
+    public class UpdateClicks
     {
 
         public readonly IDistributedCache _Cache;
 
-        public Function1( IDistributedCache cache)
+        public UpdateClicks( IDistributedCache cache)
         {
             _Cache = cache;
         }
@@ -33,20 +33,20 @@ namespace Cache_DatabaseTimeTrigger
             {
                 string id = item.Key;
                 string query = $"SELECT * FROM c WHERE c.id = '{id}'";
-                var c = await Cosmos.GetSingleItem<Product>(query, "Products");
+                var c = await CosmosDB.GetSingleItem<Product>(query, "Products");
                 if (c.HasSucces)
                 {
                     c.Item.Clicks += item.Value;
-                    var d = await Cosmos.UpsertItem(c.Item, "Products");
+                    var d = await CosmosDB.UpsertItem(c.Item, "Products");
                     if (d.HasSuccess)
                     {
                         redisCache[id] = 0;
-                        string e = JsonSerializer.Serialize(redisCache);
-                        await _Cache.SetStringAsync("KeyPadrao", e);
                     }
                 }
-
             }
+            string e = JsonSerializer.Serialize(redisCache);
+            await _Cache.SetStringAsync("KeyPadrao", e);
+            await _Cache.SetStringAsync("Profiles", "       ");
         }
     }
 }

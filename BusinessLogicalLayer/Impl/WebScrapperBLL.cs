@@ -32,6 +32,7 @@ namespace BusinessLogicalLayer.Impl
         {
             try
             {
+                //Pesquisa no isntagram a conta 
                 DataResponse<string> scrape = await _webScrapperService.ScrapeInstagramWithDefaultAccount(false, profile);
                 if (!scrape.HasSuccess)
                 {
@@ -86,17 +87,20 @@ namespace BusinessLogicalLayer.Impl
             }
 
         }
-
+        /// <summary>
+        /// Verifica se a categoria do perfil se encontra no cache, se não estiver executa o scrapping e a categorização em seguida salva o novo perfil e a categoria em cache
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
         public async Task<DataResponse<Product>> VerifyProfile(string username)
         {
             try
             {
                 Dictionary<string, string> profilesCache = new();
                 //busca o cache do redis
-                string json = "";
 
-                //json= await _cache.GetStringAsync("Profiles");
-                
+                string json = await _cache.GetStringAsync("Profiles");
+
 
 
                 //se nao for nulo deserializa

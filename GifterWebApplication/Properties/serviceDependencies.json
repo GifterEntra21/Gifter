@@ -1,12 +1,12 @@
 {
   "dependencies": {
-    "cosmosdb1": {
-      "type": "cosmosdb",
-      "connectionId": "AzureCosmosDbSettings"
-    },
     "redis1": {
       "type": "redis",
       "connectionId": "AzureRedisConnection"
+    },
+    "cosmosdb1": {
+      "type": "cosmosdb",
+      "connectionId": "AzureCosmosDbSettings"
     }
   }
 }

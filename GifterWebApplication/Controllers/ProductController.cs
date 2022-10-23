@@ -2,7 +2,7 @@
 using BusinessLogicalLayer.Interfaces;
 using Entities;
 using GifterWebApplication.Models.Products;
-using GifterWebApplication.Models.RecommendationRequest;
+using GifterWebApplication.Models.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Responses;
@@ -27,13 +27,13 @@ namespace GifterWebApplication.Controllers
         [Authorize]
         [Route("ProductsByGenre")]
         
-        public async Task<IActionResult> GetGifts([FromQuery]DefaultRequest genre)
+        public async Task<IActionResult> GetGifts([FromQuery]string genre)
         {
             if (genre == null)
             {
                 return BadRequest();
             }
-            DataResponse<Product> res = await _ProductService.GetByGenre(genre.Request.ToLower());
+            DataResponse<Product> res = await _ProductService.GetByGenre(genre.ToLower());
 
             List<ProductSelectViewModel> products = _mapper.Map<List<ProductSelectViewModel>>(res.ItemList);
 
@@ -47,7 +47,7 @@ namespace GifterWebApplication.Controllers
 
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(Product))]
-        //[Authorize]
+        [Authorize]
         [Route("AllProducts")]
 
         public async Task<IActionResult> GetAllProducts()
@@ -120,6 +120,10 @@ namespace GifterWebApplication.Controllers
         public async Task<IActionResult>  ClickPlus([FromBody] DefaultRequest productID)
         {
            var a = await _ProductService.ClicksPlus(productID.Request);
+            if (!a.HasSuccess)
+            {
+                return BadRequest();
+            }
            return Ok(a);
         }
     }
