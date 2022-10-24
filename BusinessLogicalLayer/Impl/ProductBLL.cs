@@ -29,7 +29,8 @@ namespace BusinessLogicalLayer.Impl
         {
             try
             {
-                return await _ProductService.GetAll();
+                DataResponse<Product> response = await _ProductService.GetAll();
+                return response;
 
             }   
             catch (Exception ex)
@@ -51,7 +52,7 @@ namespace BusinessLogicalLayer.Impl
                 return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(ex);
             }
         }
-
+ 
         public async Task<DataResponse<Product>> GetByGenre(string genre)
         {
             try
@@ -82,8 +83,7 @@ namespace BusinessLogicalLayer.Impl
         {
             try
             {
-                
-
+           
                 return await _ProductService.Insert(product);
 
             }

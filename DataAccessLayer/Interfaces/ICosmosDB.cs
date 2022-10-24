@@ -21,7 +21,7 @@ namespace DataAccessLayer.Interfaces
 
         public Task<Response> UpsertItem<T>(T updatedItem, string containerName);
 
-        public Task<SocialMediaAccount> GetDefaultInstagramAccount();
+        public Task<List<SocialMediaAccount>> GetDefaultInstagramAccount();
 
     }
 }

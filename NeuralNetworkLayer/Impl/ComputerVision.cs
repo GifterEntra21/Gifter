@@ -12,18 +12,23 @@ using Microsoft.ML;
 using Microsoft.ML.Trainers;
 using System.Text;
 using Shared.Responses;
+using NeuralNetworkLayer.Interfaces;
 
 namespace NeuralNetworkLayer
 {
-    public class ComputerVision
+    public class ComputerVision : IComputerVision
     {
         // Endpoint (URL) e chave de acesso (subscription key) do Computer Vision
-        static string subscriptionKey = "ffef98b421584701a97a535cef29a294";
-        static string endpoint = "https://gifter-cv.cognitiveservices.azure.com/";
+        private string subscriptionKey;
+        private string endpoint;
 
         // URL para a análise de uma única imagem
         //private const string ANALYZE_URL_IMAGE = "https://cdn-1.motorsport.com/images/amp/0k783Oq0/s800/lewis-hamilton-mercedes-w13-cr.jpg";
-
+        public ComputerVision(string _subscriptionKey,string _endpoint)
+        {
+            subscriptionKey = _subscriptionKey;
+            endpoint = _endpoint;
+        }
         public async Task<DataResponse<ImageTag>> CheckTags(List<string> urls)
         {
             // Create a client

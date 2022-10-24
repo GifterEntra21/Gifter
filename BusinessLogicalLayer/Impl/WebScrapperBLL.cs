@@ -3,9 +3,11 @@ using DataAccessLayer.Impl;
 using DataAccessLayer.Interfaces;
 using Entities;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
+using Microsoft.Extensions.Caching.Distributed;
 using NeuralNetworkLayer;
 using NeuralNetworkLayer.Interfaces;
 using Shared.Responses;
+using System.Text.Json;
 
 namespace BusinessLogicalLayer.Impl
 {
@@ -13,24 +15,30 @@ namespace BusinessLogicalLayer.Impl
     {
         public readonly IWebScrapperDAL _webScrapperService;
         public readonly IRecommendationModel _recommendationModelService;
+        public readonly IDistributedCache _cache;
+        public readonly IProductBLL _productService;
+        public readonly IComputerVision _vision;
 
-        public WebScrapperBLL(IWebScrapperDAL webScrapperService, IRecommendationModel recommendationModelService)
+        public WebScrapperBLL(IWebScrapperDAL webScrapperService, IRecommendationModel recommendationModelService, IDistributedCache cache, IProductBLL productService, IComputerVision vision)
         {
             _webScrapperService = webScrapperService;
             _recommendationModelService = recommendationModelService;
+            _cache = cache;
+            _productService = productService;
+            _vision = vision;
         }
 
         public async Task<DataResponse<TagWithCount>> Scrape(string profile)
         {
             try
             {
-                ComputerVision vision = new ComputerVision();
+                //Pesquisa no isntagram a conta 
                 DataResponse<string> scrape = await _webScrapperService.ScrapeInstagramWithDefaultAccount(false, profile);
                 if (!scrape.HasSuccess)
                 {
                     return ResponseFactory.CreateInstance().CreateFailedDataResponse<TagWithCount>(null);
                 }
-                DataResponse<ImageTag> tags = await vision.CheckTags(scrape.ItemList);
+                DataResponse<ImageTag> tags = await _vision.CheckTags(scrape.ItemList);
                 if (!tags.HasSuccess)
                 {
                     return ResponseFactory.CreateInstance().CreateFailedDataResponse<TagWithCount>(null);
@@ -79,10 +87,67 @@ namespace BusinessLogicalLayer.Impl
             }
 
         }
-
-        public async Task<DataResponse<Product>> GetGifts(List<TagWithCount> tags, string username)
+        /// <summary>
+        /// Verifica se a categoria do perfil se encontra no cache, se não estiver executa o scrapping e a categorização em seguida salva o novo perfil e a categoria em cache
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        public async Task<DataResponse<Product>> VerifyProfile(string username)
         {
-            return await _recommendationModelService.GetGifts(tags, username);
+            try
+            {
+                Dictionary<string, string> profilesCache = new();
+                //busca o cache do redis
+
+                string json = await _cache.GetStringAsync("Profiles");
+
+
+
+                //se nao for nulo deserializa
+                if (!string.IsNullOrWhiteSpace(json))
+                {
+
+                    profilesCache = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                    //se existir retorna os produtos
+                    if (profilesCache.ContainsKey(username))
+                    {
+                        DataResponse<Product> products = await _productService.GetByGenre(profilesCache[username]);
+
+                        return ResponseFactory.CreateInstance().CreateSuccessDataResponse<Product>(products.ItemList);
+                    }
+                }
+                //como o perfil nao existe categoriza
+                DataResponse<TagWithCount> tags = await Scrape(username);
+                if (!tags.HasSuccess)
+                {
+                    return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(null, "nao foi possivel verficar o perfil");
+                }
+                SingleResponse<InstagramProfile> profile = await _recommendationModelService.CategorizeProfileByTags(tags.ItemList, username);
+                if (!profile.HasSucces)
+                {
+                    return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(null, "nao foi possivel categorizar o perfil");
+                }
+                //adiciona na lista, nao importa se estiver vazia ou nao
+                profilesCache.Add(username, profile.Item.Genre);
+                //converte pra  json
+                string newProfileCache = JsonSerializer.Serialize(profilesCache);
+                //Setado novamente
+                await _cache.SetStringAsync("Profiles", newProfileCache);
+
+                DataResponse<Product> newProducts = await _productService.GetByGenre(profile.Item.Genre);
+                if (!newProducts.HasSuccess)
+                {
+                    return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(null, "nao foir possivel acessar os produtos");
+                }
+
+                return ResponseFactory.CreateInstance().CreateSuccessDataResponse<Product>(newProducts.ItemList);
+            }
+            catch (Exception ex)
+            {
+                return ResponseFactory.CreateInstance().CreateFailedDataResponse<Product>(ex);
+            }
         }
+
+
     }
 }

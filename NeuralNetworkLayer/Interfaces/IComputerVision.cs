@@ -1,4 +1,4 @@
-﻿using Entities;
+﻿using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using Shared.Responses;
 using System;
 using System.Collections.Generic;
@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace NeuralNetworkLayer.Interfaces
 {
-    public interface IRecommendationModel
+    public interface IComputerVision
     {
-        public Task<SingleResponse<InstagramProfile>> CategorizeProfileByTags(List<TagWithCount> tags, string username);
+        public Task<DataResponse<ImageTag>> CheckTags(List<string> urls);
     }
 }

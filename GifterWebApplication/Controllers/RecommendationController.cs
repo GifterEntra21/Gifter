@@ -5,7 +5,6 @@ using Entities;
 using BusinessLogicalLayer.Impl;
 using BusinessLogicalLayer.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using GifterWebApplication.Models.RecommendationRequest;
 
 namespace GiterWebAPI.Controllers
 {
@@ -30,21 +29,15 @@ namespace GiterWebAPI.Controllers
         // Scrape the profile for images and recommend gifts based on that
         public async Task<IActionResult> GetGifts([FromQuery] string request) 
         {
-            string _profile = request.Replace("@", "");
-            DataResponse<TagWithCount> tags = await _WebScrapperService.Scrape(_profile);
+            string _profile = request.Replace("@", "").Replace(" ","");
+
+            DataResponse<Product> tags = await _WebScrapperService.VerifyProfile(_profile);
             if (!tags.HasSuccess)
             {
-                return NotFound();
+                return NotFound(tags.Exception);
             }
-
-            DataResponse<Product> giftsResponse = await _WebScrapperService.GetGifts(tags.ItemList, _profile);
             
-            if (!giftsResponse.HasSuccess)
-            {
-                return NotFound();
-            }
-            List<Product> gifts = giftsResponse.ItemList;
-
+            List<Product> gifts = tags.ItemList;
             return Ok(gifts);
         }
 
