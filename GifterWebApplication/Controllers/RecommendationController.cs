@@ -29,11 +29,12 @@ namespace GiterWebAPI.Controllers
         // Scrape the profile for images and recommend gifts based on that
         public async Task<IActionResult> GetGifts([FromQuery] string request) 
         {
-            string _profile = request.Replace("@", "");
+            string _profile = request.Replace("@", "").Replace(" ","");
+
             DataResponse<Product> tags = await _WebScrapperService.VerifyProfile(_profile);
             if (!tags.HasSuccess)
             {
-                return NotFound();
+                return NotFound(tags.Exception);
             }
             
             List<Product> gifts = tags.ItemList;

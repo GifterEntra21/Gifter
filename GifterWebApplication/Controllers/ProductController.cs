@@ -47,7 +47,6 @@ namespace GifterWebApplication.Controllers
 
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(Product))]
-        [Authorize]
         [Route("AllProducts")]
 
         public async Task<IActionResult> GetAllProducts()
@@ -58,7 +57,7 @@ namespace GifterWebApplication.Controllers
             {
                 return NotFound(res.Exception.Message);
             }
-            return Ok(products);       
+            return Ok(products.OrderByDescending(x => x.Clicks));       
         }
 
         [HttpPost]

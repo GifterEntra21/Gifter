@@ -14,11 +14,6 @@ namespace BusinessLogicalLayer.Interfaces
         Task<Response> Upsert(Product updatedProduct);
         Task<Response> Delete(Product product);
         Task<DataResponse<Product>> GetAll();
-        /// <summary>
-        /// Busca no banco produtos com a categoria informada
-        /// </summary>
-        /// <param name="genre"></param>
-        /// <returns></returns>
         Task<DataResponse<Product>> GetByGenre(string genre);
         Task<DataResponse<Product>> GetByAssociatedPartner(string AssociatedPartner);
         Task<SingleResponse<Product>> GetById(string id);

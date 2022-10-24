@@ -8,20 +8,13 @@ namespace DataAccessLayer
 {
     public class CosmosDb : ICosmosDB
     {
-        string _cosmosURI;
-        string _CosmosPrimaryKey;
 
+
+        private CosmosClient _client { get; set; }
         public CosmosDb(string cosmosURI,string CosmosPrimaryKey)
         {
-            _cosmosURI = cosmosURI;
-            _CosmosPrimaryKey = CosmosPrimaryKey;
-        }
+            _client = new(cosmosURI, CosmosPrimaryKey);
 
-        private async Task<Container> CosmosConnect(string containerName)
-        {
-            CosmosClient client = new(_cosmosURI, _CosmosPrimaryKey);
-
-            return client.GetContainer("GifterDb", containerName);
         }
 
 
@@ -36,9 +29,9 @@ namespace DataAccessLayer
         {
             try
             {
-                Container container = await CosmosConnect(containerName);
+                Container _container = _client.GetContainer("GifterDb", containerName);
 
-                FeedIterator<T> iterator = container.GetItemQueryIterator<T>(query);
+                FeedIterator<T> iterator = _container.GetItemQueryIterator<T>(query);
                 FeedResponse<T> doc = await iterator.ReadNextAsync();
                 List<T> items = new List<T>();
 
@@ -52,6 +45,10 @@ namespace DataAccessLayer
             catch (Exception ex)
             {
                 return ResponseFactory.CreateInstance().CreateFailedDataResponse<T>(ex);
+            }
+            finally
+            {
+                _client.Dispose();
             }
 
         }
@@ -67,9 +64,9 @@ namespace DataAccessLayer
         {
             try
             {
-                Container container = await CosmosConnect(containerName);
+                Container _container = _client.GetContainer("GifterDb", containerName);
 
-                FeedIterator<T> iterator = container.GetItemQueryIterator<T>(query);
+                FeedIterator<T> iterator = _container.GetItemQueryIterator<T>(query);
 
                 FeedResponse<T> doc = await iterator.ReadNextAsync();
 
@@ -82,7 +79,10 @@ namespace DataAccessLayer
             {
                 return ResponseFactory.CreateInstance().CreateFailedSingleResponse<T>(ex);
             }
-
+            finally
+            {
+                _client.Dispose();
+            }
         }
 
         /// <summary>
@@ -96,8 +96,8 @@ namespace DataAccessLayer
         {
             try
             {
-                Container container = await CosmosConnect(containerName);
-                await container.CreateItemAsync<T>(item);
+                Container _container = _client.GetContainer("GifterDb", containerName);
+                await _container.CreateItemAsync<T>(item);
 
                 return ResponseFactory.CreateInstance().CreateSuccessResponse();
 
@@ -106,15 +106,18 @@ namespace DataAccessLayer
             {
                 return ResponseFactory.CreateInstance().CreateFailedResponse(ex);
             }
-
+            finally
+            {
+                _client.Dispose();
+            }
         }
 
         public async Task<Response> DeleteItem(ICosmosDbItem item, string containerName)
         {
             try
             {
-                Container container = await CosmosConnect(containerName);
-                await container.DeleteItemAsync<ICosmosDbItem>(item.id, new PartitionKey(item.PartitionKey));
+                Container _container = _client.GetContainer("GifterDb", containerName);
+                await _container.DeleteItemAsync<ICosmosDbItem>(item.id, new PartitionKey(item.PartitionKey));
 
                 return ResponseFactory.CreateInstance().CreateSuccessResponse();
 
@@ -122,6 +125,10 @@ namespace DataAccessLayer
             catch (Exception ex)
             {
                 return ResponseFactory.CreateInstance().CreateFailedResponse(ex);
+            }
+            finally
+            {
+                _client.Dispose();
             }
         }
 
@@ -137,8 +144,8 @@ namespace DataAccessLayer
         {
             try
             {
-                Container container = await CosmosConnect(containerName);
-                await container.UpsertItemAsync<T>(updatedItem);
+                Container _container = _client.GetContainer("GifterDb", containerName);
+                await _container.UpsertItemAsync<T>(updatedItem);
 
        
                 return ResponseFactory.CreateInstance().CreateSuccessResponse();
@@ -147,6 +154,10 @@ namespace DataAccessLayer
             catch (Exception ex)
             {
                 return ResponseFactory.CreateInstance().CreateFailedResponse(ex);
+            }
+            finally
+            {
+                _client.Dispose();
             }
         }
 

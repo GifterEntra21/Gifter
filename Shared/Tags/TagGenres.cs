@@ -16,7 +16,7 @@
             animeTags = new GenreWithTags
             {
                 GenreName = "anime",
-                Tags = new List<string>(){"anime", "manga", "fiction", "cartonn", "drawing", "art", "animation",
+                Tags = new List<string>(){"anime", "manga", "fiction", "cartoon", "drawing", "art", "animation",
             "animated cartoon", "illustration", "fictional character", "comic","comics", "toy", "collection", "book", "hair coloring",
             "novel", "bookcase", "figure", "animal figure", "baby toys", "fashion accessory", "costume", "cosplay", "asian", "poster" }
             };
@@ -26,7 +26,7 @@
                 GenreName = "exoteric",
                 Tags = new List<string>(){"plant", "garden", "housplant", "flowerpot",
             "flower", "art", "candle", "animal", "grass", "lady", "christmas", "candle holder", "tree", "still life",
-            "floral design", "sunflower", "forest", "nature", "meadow", "insect", "star"}
+            "floral design", "sunflower", "forest", "nature", "meadow", "insect", "star","drawing","art"}
             };
 
             fashionTags = new GenreWithTags

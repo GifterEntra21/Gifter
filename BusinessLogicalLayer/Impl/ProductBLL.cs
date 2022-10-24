@@ -29,7 +29,8 @@ namespace BusinessLogicalLayer.Impl
         {
             try
             {
-                return await _ProductService.GetAll();
+                DataResponse<Product> response = await _ProductService.GetAll();
+                return response;
 
             }   
             catch (Exception ex)

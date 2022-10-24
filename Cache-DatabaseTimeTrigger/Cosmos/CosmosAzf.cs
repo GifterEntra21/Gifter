@@ -5,26 +5,25 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using System;
 using System.Linq;
+using Cache_DatabaseTimeTrigger.Cosmos;
 
 namespace Cache_DatabaseTimeTrigger
 {
-    public class CosmosDB
+    public class CosmosAzf : ICosmosDbAzf
     {
-        private static string CosmosEndpoint = "https://gifter-cosmos.documents.azure.com:443/";
-        private static string CosmosPrimaryKey = "z0NHDlMzcRt0UYPl8erRzTiGQdJL6jJfiPjN5LbG34csnVljrwBX4noolwNH68I3I6L1W8KjqFGOePVjzE0Y6g==";
 
-        private static async Task<Container> CosmosConnect(string containerName)
+        private CosmosClient _client { get; set; }
+        public CosmosAzf(string cosmosURI, string CosmosPrimaryKey)
         {
-            CosmosClient client = new(CosmosEndpoint, CosmosPrimaryKey);
+            _client = new(cosmosURI, CosmosPrimaryKey);
 
-            return client.GetContainer("GifterDb", containerName);
         }
 
-        public static async Task<Response> UpsertItem<T>(T updatedItem, string containerName)
+        public async Task<Response> UpsertItem<T>(T updatedItem, string containerName)
         {
             try
             {
-                Container container = await CosmosConnect(containerName);
+                Container container = _client.GetContainer("GifterDb", containerName);
                 await container.UpsertItemAsync<T>(updatedItem);
 
 
@@ -35,12 +34,16 @@ namespace Cache_DatabaseTimeTrigger
             {
                 return ResponseFactory.CreateInstance().CreateFailedResponse(ex);
             }
+            finally
+            {
+                _client.Dispose();
+            }
         }
-        public static async Task<SingleResponse<T>> GetSingleItem<T>(string query, string containerName)
+        public async Task<SingleResponse<T>> GetSingleItem<T>(string query, string containerName)
         {
             try
             {
-                Container container = await CosmosConnect(containerName);
+                Container container = _client.GetContainer("GifterDb", containerName);
 
                 FeedIterator<T> iterator = container.GetItemQueryIterator<T>(query);
 
@@ -55,7 +58,10 @@ namespace Cache_DatabaseTimeTrigger
             {
                 return ResponseFactory.CreateInstance().CreateFailedSingleResponse<T>(ex);
             }
-
+            finally
+            {
+                _client.Dispose();
+            }
         }
     }
 }
