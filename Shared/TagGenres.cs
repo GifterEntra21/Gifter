@@ -16,7 +16,7 @@
             animeTags = new GenreWithTags
             {
                 GenreName = "anime",
-                Tags = new List<string>(){"anime", "manga", "fiction", "cartonn", "drawing", "art", "animation",
+                Tags = new List<string>(){"anime", "manga", "fiction", "cartoon", "drawing", "art", "animation",
             "animated cartoon", "illustration", "fictional character", "comic","comics", "toy", "collection", "book", "hair coloring",
             "novel", "bookcase", "figure", "animal figure", "baby toys", "fashion accessory", "costume", "cosplay", "asian", "poster" }
             };
@@ -26,7 +26,7 @@
                 GenreName = "exoteric",
                 Tags = new List<string>(){"plant", "garden", "housplant", "flowerpot",
             "flower", "art", "candle", "animal", "grass", "lady", "christmas", "candle holder", "tree", "still life",
-            "floral design", "sunflower", "forest", "nature", "meadow", "insect", "star"}
+            "floral design", "sunflower", "forest", "nature", "meadow", "insect", "star", "drawing", "art"}
             };
 
             fashionTags = new GenreWithTags
@@ -47,15 +47,6 @@
             "audio equipment", "toy", "peripheral", "gadget", "earphone", "laptop", "netbook", "touchpad" }
             };
 
-            carTags = new GenreWithTags
-            {
-                GenreName = "car",
-                Tags = new List<string>(){"vehicle", "land vehicle", "car", "race car", "race", "wheel", "tire",
-            "parking", "parked", "auto part", "transport", "automotive", "automotive lighting", "car seat", "drive", "driver", "driving", "automotive design",
-            "car seat cover", "road", "sports sedan", "sedan", "coupe", "hatch", "sports coupe", "sports car", "automotive parking light",
-            "parking lot", "garage", "automotive wheel system", "headlamp", "automobile repair shop", "engine", "motor", "automotive light bulb",
-            "vehicle door", "windshield", "performance car", "supercar", "hypercar", "bmw", "city car", "motor vehicle", "mechanic", "automotive mechanic" }
-            };
         }
 
 
@@ -71,6 +62,6 @@
 
         private static GenreWithTags carTags;
 
-        public static List<GenreWithTags> GenresList { get { return new List<GenreWithTags> { sportTags, animeTags, exotericTags,fashionTags,gamerTags, carTags }; } }
+        public static List<GenreWithTags> GenresList { get { return new List<GenreWithTags> { sportTags, animeTags, exotericTags,fashionTags,gamerTags }; } }
     }
 }
