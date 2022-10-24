@@ -13,6 +13,7 @@ using Shared.Settings;
 using System.Reflection;
 using System.Text;
 using Microsoft.Extensions.Caching.Distributed;
+using NeuralNetworkLayer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,9 +28,26 @@ builder.Services.AddTransient<IWebScrapperDAL, WebScrapperDAL>();
 
 builder.Services.AddTransient<IRecommendationModel, RecommendationService>();
 
-builder.Services.AddTransient<ICosmosDB, CosmosDb>();
+builder.Services.AddTransient<ICosmosDB>(opt =>
+{
+    string URL = builder.Configuration.GetSection("AzureCosmosDbSettings").GetValue<string>("URL");
+    string primaryKey = builder.Configuration.GetSection("AzureCosmosDbSettings").GetValue<string>("PrimaryKey");
 
+    var cosmosClient = new CosmosDb(URL,primaryKey);
+    return cosmosClient;
+});
 
+builder.Services.AddTransient<IComputerVision>(opt =>
+{
+    string subscriptionKey = builder.Configuration.GetSection("ComputerVisionSettings").GetValue<string>("subscriptionKey");
+    string endpoint = builder.Configuration.GetSection("ComputerVisionSettings").GetValue<string>("endpoint");
+    var computerClient = new ComputerVision(subscriptionKey, endpoint);
+    return computerClient;
+});
+builder.Services.AddDistributedRedisCache(opt =>
+{
+    opt.Configuration = builder.Configuration["AzureRedisConnection"];
+});
 builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
@@ -41,22 +59,15 @@ builder.Services.AddAuthentication(opt => {
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true,
+            ValidateIssuer = false,
             ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = "https://localhost:7008",
-            //ValidAudience = "*",
+            ValidIssuer = "https://gifterserver.azurewebsites.net",
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345")),
-            //Define como padrão o desvio de relogio para zero, o default é de 5 minutos, por isso o token acaba sendo valido pelo tempo de
-            //expires + 5mim
             ClockSkew = TimeSpan.Zero
         };
     });
-builder.Services.AddDistributedRedisCache(opt =>
-{
-    opt.Configuration = builder.Configuration.GetConnectionString("AzureRedisConnection");
-});
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("EnableCORS", builder =>
@@ -95,7 +106,6 @@ builder.Services.AddSwaggerGen(c => {
         }
     });
 });
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

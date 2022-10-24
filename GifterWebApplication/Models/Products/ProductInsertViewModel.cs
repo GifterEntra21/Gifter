@@ -15,5 +15,7 @@ namespace GifterWebApplication.Models.Products
         public string ShopURL { get; set; }
         [Required]
         public string Image { get; set; }
+        [Required]
+        public string AssociatedPartner { get; set; }
     }
 }

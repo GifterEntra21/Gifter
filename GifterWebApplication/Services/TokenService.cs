@@ -10,29 +10,25 @@ namespace JwtAuthentication.Server.Services
 {
     public class TokenService : ITokenService
     {
-        private DateTime ExpiryTime { get; set; }
+
 
         public SingleResponse<string> GenerateAccessToken(IEnumerable<Claim> claims)
         {
             try
             {
+                DateTime expiryTime = DateTime.Now.AddMinutes(5);
+                if (AppSettings.IsDevelopingMode)
+                {
+                    expiryTime = DateTime.Now.AddHours(8);
+                }
                 SymmetricSecurityKey secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"));
                 SigningCredentials signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
-                if (AppSettings.IsDevelopingMode)
-                {
-                    ExpiryTime = DateTime.Now.AddMinutes(1);
-                }
-                else
-                {
-                    ExpiryTime = DateTime.Now.AddMinutes(1);
-                }
-
                 JwtSecurityToken tokeOptions = new JwtSecurityToken(
-                    issuer: "https://localhost:7008",
-                    audience: "https://localhost:5001",
+                    issuer: "https://gifterserver.azurewebsites.net",
+                    audience: "https://gifter-e21.netlify.app",
                     claims: claims,
-                    expires: ExpiryTime,
+                    expires: expiryTime,
                     signingCredentials: signinCredentials
                 );
 
@@ -44,9 +40,8 @@ namespace JwtAuthentication.Server.Services
 
                 return ResponseFactory.CreateInstance().CreateFailedSingleResponse<string>(ex);
             }
-            
-        }
 
+        }
         public string GenerateRefreshToken()
         {
             byte[] randomNumber = new byte[32];
@@ -90,7 +85,7 @@ namespace JwtAuthentication.Server.Services
 
                 return ResponseFactory.CreateInstance().CreateFailedSingleResponse<ClaimsPrincipal>(ex);
             }
-            
+
         }
     }
 }

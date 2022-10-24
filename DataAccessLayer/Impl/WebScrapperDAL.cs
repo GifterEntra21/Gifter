@@ -23,10 +23,18 @@ namespace DataAccessLayer.Impl
         }
 
         private IWebDriver driver { get; set; }
+
         public async Task<DataResponse<string>> ScrapeInstagramWithDefaultAccount(bool headless, string profile)
         {
             try
             {
+
+                List<SocialMediaAccount> accounts = await _CosmosService.GetDefaultInstagramAccount();
+                //Randomize an account
+                Random random = new();
+                int loginRandomAccount = random.Next(0, accounts.Count);
+
+             
                 if (AppSettings.IsDevelopingMode)
                 {
                     ChromeOptions options = new ChromeOptions();
@@ -66,7 +74,7 @@ namespace DataAccessLayer.Impl
                     options.AddArgument("--deny-permission-prompts");
 
                     // Note we set our token here, with `true` as a third arg
-                    options.AddAdditionalOption("browserless:token", "6d199b73-289d-40dd-aff9-a36e25a5623a");
+                    options.AddAdditionalOption("browserless:token", accounts[loginRandomAccount].BrowserlessToken);
 
                     driver = new RemoteWebDriver(
                       new Uri("https://chrome.browserless.io/webdriver"), options.ToCapabilities()
@@ -83,21 +91,19 @@ namespace DataAccessLayer.Impl
                 IWebElement password = wait.Until(ExpectedConditions.ElementToBeClickable(By.Name("password")));
 
 
-                //writes the account's username and password and clicks to login
-                SocialMediaAccount sca = await _CosmosService.GetDefaultInstagramAccount();
-                username.SendKeys(sca.Email);
-                password.SendKeys(sca.Password);
+                //search instagram accounts in database
+                
+                username.SendKeys(accounts[loginRandomAccount].Email);
+                password.SendKeys(accounts[loginRandomAccount].Password);
 
                 wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("button[type='submit']"))).Click();
 
 
                 //searches the user profile
-                wait.Until(ExpectedConditions.ElementToBeClickable(By.ClassName("_acan")));
+                wait.Until(ExpectedConditions.UrlContains("https://www.instagram.com/accounts/onetap/?next=%2F"));
+
                 driver.Navigate().GoToUrl("https://www.instagram.com/" + profile);
 
-
-                //scrolls down to scrape more images
-                //maybe the index could be a parameter, so the user could define how much they want to scroll
 
                 wait.Until(ExpectedConditions.ElementToBeClickable(By.ClassName("_aabd")));
 
@@ -126,7 +132,6 @@ namespace DataAccessLayer.Impl
                 {
                     driver.Quit();
                 }
-
             }
             
         }

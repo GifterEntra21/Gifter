@@ -25,8 +25,8 @@
             {
                 GenreName = "exoteric",
                 Tags = new List<string>(){"plant", "garden", "housplant", "flowerpot",
-            "flower", "art", "candle", "animal", "grass", "lady", "christmas", "candle holder", "tree", "still life",
-            "floral design", "sunflower", "forest", "nature", "meadow", "insect", "star", "drawing", "art"}
+            "flower", "art", "candle", "animal", "grass", "lady", "christmas", "candle holder", "tree", "still life", "floral design", "sunflower", "forest", "nature", "meadow", "insect", "star", "drawing", "art"}
+
             };
 
             fashionTags = new GenreWithTags
@@ -59,8 +59,6 @@
         private static GenreWithTags fashionTags;
 
         private static GenreWithTags gamerTags;
-
-        private static GenreWithTags carTags;
 
         public static List<GenreWithTags> GenresList { get { return new List<GenreWithTags> { sportTags, animeTags, exotericTags,fashionTags,gamerTags }; } }
     }
