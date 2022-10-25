@@ -12,19 +12,32 @@ namespace Cache_DatabaseTimeTrigger
     public class CosmosAzf : ICosmosDbAzf
     {
 
-        private CosmosClient _client { get; set; }
-        public CosmosAzf(string cosmosURI, string CosmosPrimaryKey)
-        {
-            _client = new(cosmosURI, CosmosPrimaryKey);
+        private readonly string _cosmosURI;
+        private readonly string _CosmosPrimaryKey;
 
+
+        private CosmosClient _client { get; set; }
+
+        public CosmosAzf(string cosmosURI, string cosmosPrimaryKey)
+        {
+            _cosmosURI = cosmosURI;
+            _CosmosPrimaryKey = cosmosPrimaryKey;
         }
 
+        private async Task<Container> CosmosConnect(string containerName)
+        {
+            CosmosClient client = new(_cosmosURI, _CosmosPrimaryKey);
+
+            _client = client;
+
+            return client.GetContainer("GifterDb", containerName);
+        }
         public async Task<Response> UpsertItem<T>(T updatedItem, string containerName)
         {
             try
             {
-                Container container = _client.GetContainer("GifterDb", containerName);
-                await container.UpsertItemAsync<T>(updatedItem);
+                Container _container = await CosmosConnect(containerName);
+                await _container.UpsertItemAsync<T>(updatedItem);
 
 
                 return ResponseFactory.CreateInstance().CreateSuccessResponse();
@@ -43,9 +56,9 @@ namespace Cache_DatabaseTimeTrigger
         {
             try
             {
-                Container container = _client.GetContainer("GifterDb", containerName);
+                Container _container = await CosmosConnect(containerName);
 
-                FeedIterator<T> iterator = container.GetItemQueryIterator<T>(query);
+                FeedIterator<T> iterator = _container.GetItemQueryIterator<T>(query);
 
                 FeedResponse<T> doc = await iterator.ReadNextAsync();
 

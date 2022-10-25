@@ -8,16 +8,26 @@ namespace DataAccessLayer
 {
     public class CosmosDb : ICosmosDB
     {
+        private readonly string _cosmosURI;
+        private readonly string _CosmosPrimaryKey;
 
 
         private CosmosClient _client { get; set; }
-        public CosmosDb(string cosmosURI,string CosmosPrimaryKey)
-        {
-            _client = new(cosmosURI, CosmosPrimaryKey);
 
+        public CosmosDb(string cosmosURI, string cosmosPrimaryKey)
+        {
+            _cosmosURI = cosmosURI;
+            _CosmosPrimaryKey = cosmosPrimaryKey;
         }
 
+        private async Task<Container> CosmosConnect(string containerName)
+        {
+            CosmosClient client = new(_cosmosURI, _CosmosPrimaryKey);
 
+            _client = client;
+
+            return client.GetContainer("GifterDb", containerName);
+        }
         /// <summary>
         /// Make a simple query on the database and returns a DataResponse
         /// </summary>
@@ -29,7 +39,7 @@ namespace DataAccessLayer
         {
             try
             {
-                Container _container = _client.GetContainer("GifterDb", containerName);
+                Container _container = await CosmosConnect(containerName);
 
                 FeedIterator<T> iterator = _container.GetItemQueryIterator<T>(query);
                 FeedResponse<T> doc = await iterator.ReadNextAsync();
@@ -64,7 +74,7 @@ namespace DataAccessLayer
         {
             try
             {
-                Container _container = _client.GetContainer("GifterDb", containerName);
+                Container _container = await CosmosConnect(containerName);
 
                 FeedIterator<T> iterator = _container.GetItemQueryIterator<T>(query);
 
@@ -79,10 +89,10 @@ namespace DataAccessLayer
             {
                 return ResponseFactory.CreateInstance().CreateFailedSingleResponse<T>(ex);
             }
-            finally
-            {
-                _client.Dispose();
-            }
+            //finally
+            //{
+            //    _client.Dispose();
+            //}
         }
 
         /// <summary>
@@ -96,7 +106,7 @@ namespace DataAccessLayer
         {
             try
             {
-                Container _container = _client.GetContainer("GifterDb", containerName);
+                Container _container = await CosmosConnect(containerName);
                 await _container.CreateItemAsync<T>(item);
 
                 return ResponseFactory.CreateInstance().CreateSuccessResponse();
@@ -116,7 +126,7 @@ namespace DataAccessLayer
         {
             try
             {
-                Container _container = _client.GetContainer("GifterDb", containerName);
+                Container _container = await CosmosConnect(containerName);
                 await _container.DeleteItemAsync<ICosmosDbItem>(item.id, new PartitionKey(item.PartitionKey));
 
                 return ResponseFactory.CreateInstance().CreateSuccessResponse();
@@ -144,7 +154,7 @@ namespace DataAccessLayer
         {
             try
             {
-                Container _container = _client.GetContainer("GifterDb", containerName);
+                Container _container = await CosmosConnect(containerName);
                 await _container.UpsertItemAsync<T>(updatedItem);
 
        

@@ -16,7 +16,7 @@ namespace JwtAuthentication.Server.Services
         {
             try
             {
-                DateTime expiryTime = DateTime.Now.AddMinutes(5);
+                DateTime expiryTime = DateTime.Now.AddMinutes(1);
                 if (AppSettings.IsDevelopingMode)
                 {
                     expiryTime = DateTime.Now.AddHours(8);

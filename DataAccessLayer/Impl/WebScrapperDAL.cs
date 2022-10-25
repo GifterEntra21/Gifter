@@ -28,14 +28,19 @@ namespace DataAccessLayer.Impl
         {
             try
             {
+                //apresentaçãoentra21 -0 passou
+                //gifterplus - 1 nao passou
+                //plugifter  - 2 passou
+                //giftere21 - 3 nao passou
+
 
                 List<SocialMediaAccount> accounts = await _CosmosService.GetDefaultInstagramAccount();
                 //Randomize an account
                 Random random = new();
-                int loginRandomAccount = random.Next(0, accounts.Count);
+                int loginRandomAccount = random.Next(0,1);
 
              
-                if (AppSettings.IsDevelopingMode)
+                if (false)
                 {
                     ChromeOptions options = new ChromeOptions();
 

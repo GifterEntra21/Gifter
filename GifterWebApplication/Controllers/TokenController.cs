@@ -24,7 +24,7 @@ namespace GifterWebApplication.Controllers
         [HttpPost]
         [Route("refresh")]
         [ProducesResponseType(200, Type = typeof(AuthenticationResponse))]
-        public IActionResult Refresh([FromBody] TokenApiModel tokenApiModel)
+        public async Task<IActionResult> Refresh([FromBody] TokenApiModel tokenApiModel)
         {
             try
             {
@@ -39,9 +39,9 @@ namespace GifterWebApplication.Controllers
                 var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken).Item;
                 var _username = principal.Identity.Name; //this is mapped to the Name claim by default
 
-                var user = _userService.GetByUsername(new APIUser() { Username = _username });
+                var user = await _userService.GetByUsername(new APIUser() { Username = _username });
 
-                if (user == null || user.Result.Item.RefreshToken != refreshToken || user.Result.Item.RefreshTokenExpiryTime <= DateTime.Now)
+                if (!user.HasSucces || user.Item.RefreshToken != refreshToken || user.Item.RefreshTokenExpiryTime <= DateTime.Now)
                 {
                     return BadRequest("Invalid client request");
                 }
@@ -49,9 +49,9 @@ namespace GifterWebApplication.Controllers
                 var newAccessToken = _tokenService.GenerateAccessToken(principal.Claims).Item;
                 var newRefreshToken = _tokenService.GenerateRefreshToken();
 
-                user.Result.Item.RefreshToken = newRefreshToken;
+                user.Item.RefreshToken = newRefreshToken;
 
-                _userService.Update(user.Result.Item);
+                await _userService.Update(user.Item);
 
                 return Ok(new AuthenticationResponse()
                 {
